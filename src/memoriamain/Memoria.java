@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package memoriamain;
 
 import java.awt.BorderLayout;
@@ -10,18 +7,23 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Icon;
+import java.util.Set;
 import javax.swing.ImageIcon;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+// import java.util.logging.Level;
+// import java.util.logging.Logger;
+// import javax.swing.Icon;
+// import java.awt.Component;
 
 /**
  *
@@ -30,91 +32,26 @@ import javax.swing.JTextArea;
 public class Memoria extends JFrame implements ActionListener {
     private JTextArea text;
     private JLabel label;
-    private Random random;
+    private List<Integer> randomList;
     private JButton botoes[];
     private JPanel panel;
-    private ImageIcon virado, top;
+    private ImageIcon unrevealed, top;
     private ImageIcon icones[];
     private ImageIcon imagem1;
     private ImageIcon imagem2;
     private Container container;
     //private boolean value;
-    private int num[], a;
+    private int num[];
     private int acertos, erros;
     private int cont;
     private int b1,b2;
     private long time;
     
-    
-
-    
-    Memoria(){
+    Memoria(int mode){
         super("Jogo da Memoria!");
-        icones = new ImageIcon[20];
-        label = new JLabel();
-        num = new int[20];
-        random = new Random();
-        
-        top = new ImageIcon (getClass().getResource("img/top.png"));
-       
-        text = new JTextArea();
-        text.setText("Bem vindo ao jogo da memória! \nAcertos:0 \nErros: 0");
-        text.setEditable(false);
-        botoes = new JButton[20];
-        virado = new ImageIcon(getClass().getResource("img/cartela.jpg"));
-        top = new ImageIcon (getClass().getResource("img/top.png"));
-        label.setIcon(top);
-        //value=false;
-        cont=0;
-        
-         int pos=0;
-        for(int x=0; x<num.length;x++){
-            num[x]=-1;
-        }
-            random=new Random();
-        for(int z=0; z<num.length; z++) {
-            do
-                pos = random.nextInt(20);
-            while(num[pos]!=-1);
-                num[pos]=z;
-        }
-        
-        
-        for(int r=0; r<10; r++){
-            int img = r+1;
-            icones[num[r]]=new ImageIcon(getClass().getResource("img/img"+img+".jpg"));
-            icones[num[r]].setDescription("" +img);
-        }
-        for(int r2=10; r2<20; r2++){
-            int img2 = r2-9;
-            icones[num[r2]]=new ImageIcon(getClass().getResource("img/img"+img2+".jpg"));
-            icones[num[r2]].setDescription("" +img2);
-        }
-        
-        
-  
-        
-        container = getContentPane();
-        panel = new JPanel();
-        panel.setLayout(new GridLayout(4,5,5,5));
-        
-       
-        
-        for(int i=0; i<botoes.length; i++){
-            botoes[i] = new JButton(""+i, virado);
-            panel.add(botoes[i]);
-            botoes[i].addActionListener(this);
-        }
-        
-        add(label, BorderLayout.PAGE_START);
-        add(text, BorderLayout.BEFORE_LINE_BEGINS);
-        add(panel, BorderLayout.CENTER);
-        
-       
+        loadMode(mode);
     }
     
-    
-   
    public void actionPerformed (ActionEvent event){
         int bot = Integer.parseInt(event.getActionCommand());
         
@@ -157,17 +94,81 @@ public class Memoria extends JFrame implements ActionListener {
             else{
                 JOptionPane.showMessageDialog( null, "Errou, errou feio, errou rude!");
                    for(int s=0; s<botoes.length; s++) 
-                    botoes[s].setIcon(virado);
+                    botoes[s].setIcon(unrevealed);
                     
                 erros++;
                 text.setText("Bem vindo ao jogo da memória! \nAcertos:"+acertos+"\nErros:"+erros);
                 cont=0;
             }  
         }
-        }
+    }
         
             
     }
-    
+
+    private void imageIconInicialize(int cardAmount, String imagePath){
+        icones = new ImageIcon[cardAmount];
+        int counterList = 0;
+        for(int counter=0; counter<cardAmount/2; counter++){
+            icones[randomList.get(counterList)]=new ImageIcon(getClass().getResource(imagePath+"img"+(counter+1)+".jpg"));
+            icones[randomList.get(counterList)].setDescription(""+counter+1);
+            counterList++;
+            icones[randomList.get(counterList)]=new ImageIcon(getClass().getResource(imagePath+"img"+(counter+1)+".jpg"));
+            icones[randomList.get(counterList)].setDescription(""+counter+1);
+            counterList++;
+        }    
+    }
+
+    private void randomize(int cardAmount){
+        Random r = new Random();
+        Integer n;
+        while(randomList.size() < cardAmount ){
+            n = r.nextInt(cardAmount);
+            if(!(randomList.contains(n)))
+                randomList.add(n);
+        }
+    }
+
+    private void initUnrevealedCards(int cardAmount){
+        botoes = new JButton[cardAmount];
+        for(int i=0; i<botoes.length; i++){
+            botoes[i] = new JButton(""+i, unrevealed);
+            panel.add(botoes[i]);
+            botoes[i].addActionListener(this);
+        }
+    }
+
+    private void loadMode(int mode){
+        int cardAmount;
+        unrevealed = new ImageIcon(getClass().getResource("img/cartela.jpg"));
+        text = new JTextArea();
+        text.setText("Bem vindo ao jogo da memória! \nAcertos:0 \nErros: 0");
+        text.setEditable(false);
+        label = new JLabel();
+        label.setIcon(top);
+        container = getContentPane();
+        panel = new JPanel();
+        switch(mode){
+            case 1:
+            {
+                cardAmount = 20;
+                randomList = new ArrayList<>(cardAmount);
+                randomize(cardAmount);
+                imageIconInicialize(cardAmount,"img/");
+                top = new ImageIcon (getClass().getResource("img/top.png"));
+                initUnrevealedCards(cardAmount);
+                
+                panel.setLayout(new GridLayout(4,5,5,5));
+                add(label, BorderLayout.PAGE_START);
+                add(text, BorderLayout.BEFORE_LINE_BEGINS);
+                add(panel, BorderLayout.CENTER);
+            }
+
+            break;
+
+        }
+        
+       
+    }
     
 }

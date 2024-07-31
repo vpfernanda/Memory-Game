@@ -19,7 +19,7 @@ public class MemoriaMain {
      */
     public static void main(String[] args) {
         Memoria m;
-        m = new Memoria();
+        m = new Memoria(1);
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setSize(1170,720);
         m.setVisible(true);
