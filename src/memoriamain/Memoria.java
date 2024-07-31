@@ -2,17 +2,13 @@
 package memoriamain;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
+//import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,10 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-// import java.util.logging.Level;
-// import java.util.logging.Logger;
-// import javax.swing.Icon;
-// import java.awt.Component;
 
 /**
  *
@@ -33,77 +25,90 @@ public class Memoria extends JFrame implements ActionListener {
     private JTextArea text;
     private JLabel label;
     private List<Integer> randomList;
-    private JButton botoes[];
+    private JButton buttons[];
     private JPanel panel;
     private ImageIcon unrevealed, top;
     private ImageIcon icones[];
-    private ImageIcon imagem1;
-    private ImageIcon imagem2;
-    private Container container;
-    //private boolean value;
-    private int num[];
-    private int acertos, erros;
-    private int cont;
-    private int b1,b2;
-    private long time;
+    private ImageIcon img1;
+    private ImageIcon img2;
+    private int clickedButton1;
+    private int clickedButton2;
+    private int clickCounter=0;
+    //private Container container;
+    private int cardAmount;
+    private int hits=0;
+    private int errors=0;
+//private GameTimer timer;
     
     Memoria(int mode){
         super("Jogo da Memoria!");
         loadMode(mode);
+        
     }
     
-   public void actionPerformed (ActionEvent event){
-        int bot = Integer.parseInt(event.getActionCommand());
-        
-        cont++;
-        if(cont==1){
-            b1=bot;
-           botoes[b1].setIcon(icones[b1]);  
-        }
-        if(cont==2){
-            b2=bot;
-            botoes[b2].setIcon(icones[b2]);
-            if(b1==b2){
-                cont=1;
-                text.setText("Bem vindo ao jogo da memória! \nAcertos:"+acertos+"\nErros:"+erros+
-                        "\nNÃO PODE CLICAR NA\n MESMA CARTA!");
-                
-            }
-            else{
-            imagem1=(ImageIcon) botoes[b1].getIcon();
-            imagem2=(ImageIcon) botoes[b2].getIcon();
-            if(imagem1.getDescription().equals(imagem2.getDescription())){
-                acertos++;
-                
-                text.setText("Bem vindo ao jogo da memória! \nAcertos:"+acertos+"\nErros:"+erros+
-                        "\nPARABÉNS! ACERTOU!");
-                JOptionPane.showMessageDialog( null, "Acertou! Boa memória!");
-               
-                botoes[b1].setEnabled(false);
-                botoes[b2].setEnabled(false);
-                botoes[b1].setDisabledIcon(imagem1);
-                botoes[b2].setDisabledIcon(imagem2);
-                cont=0;
-                if(acertos==10){
-                    JOptionPane.showMessageDialog(null, "Você ganhou!"
-                            + "\nSeus acertos: "+acertos+"\nSeus erros: "+erros);
-                    System.exit(0);
+    public void actionPerformed (ActionEvent event){
+        int buttonActionCommand = Integer.parseInt(event.getActionCommand());
+        clickCounter++;
+        switch (clickCounter){
+            case 1: //First user click.
+                clickedButton1=buttonActionCommand;
+                buttons[clickedButton1].setIcon(icones[clickedButton1]); //Reveals the image of the card.
+                break;
+            case 2: //Second user click.
+                clickedButton2=buttonActionCommand;
+                if(clickedButton1==clickedButton2){ //User clicked the same button.
+                    text.setText(gameInfo()+"\nNÃO PODE CLICAR NA\n MESMA CARTA!");
+                    clickCounter=1;
+                    break;
                 }
-                
-            }
-            else{
-                JOptionPane.showMessageDialog( null, "Errou, errou feio, errou rude!");
-                   for(int s=0; s<botoes.length; s++) 
-                    botoes[s].setIcon(unrevealed);
-                    
-                erros++;
-                text.setText("Bem vindo ao jogo da memória! \nAcertos:"+acertos+"\nErros:"+erros);
-                cont=0;
-            }  
-        }
+                else{
+                    //clickedButton2=buttonActionCommand;
+                    buttons[clickedButton2].setIcon(icones[clickedButton2]); //Reveals the image of the card.
+                    img1=(ImageIcon)buttons[clickedButton1].getIcon();
+                    img2=(ImageIcon)buttons[clickedButton2].getIcon();
+                    compareCards();
+                    break;
+                }   
+        }   
     }
-        
-            
+    
+    private String gameInfo(){
+        return "Bem vindo ao jogo da memória! \nAcertos:"+hits+"\nErros:"+errors+"\nTempo decorrido:"+"\n";
+    }  
+
+    private void compareCards(){
+        if(img1.getDescription().equals(img2.getDescription()))
+            playerHit();
+        else
+            playerError();
+    }
+
+    private void playerHit(){
+        hits++;
+        if(hits==cardAmount/2){
+            //timer.stopTimer();
+            JOptionPane.showMessageDialog( null, "Você ganhou! Parabéns!");
+        }
+        else {
+            text.setText(gameInfo()+"\nPARABÉNS! ACERTOU!");
+            JOptionPane.showMessageDialog( null, "Acertou! Boa memória!");
+                   
+            buttons[clickedButton1].setEnabled(false);
+            buttons[clickedButton2].setEnabled(false);
+            buttons[clickedButton1].setDisabledIcon(img1);
+            buttons[clickedButton2].setDisabledIcon(img2);
+            clickCounter=0;
+        }
+       
+    }
+
+    private void playerError(){
+        errors++;
+        JOptionPane.showMessageDialog( null, "Errou, errou feio, errou rude!");
+        for(int s=0; s<buttons.length; s++) 
+            buttons[s].setIcon(unrevealed);
+        text.setText("Bem vindo ao jogo da memória! \nAcertos:"+hits+"\nErros:"+errors);
+        clickCounter=0;
     }
 
     private void imageIconInicialize(int cardAmount, String imagePath){
@@ -130,11 +135,11 @@ public class Memoria extends JFrame implements ActionListener {
     }
 
     private void initUnrevealedCards(int cardAmount){
-        botoes = new JButton[cardAmount];
-        for(int i=0; i<botoes.length; i++){
-            botoes[i] = new JButton(""+i, unrevealed);
-            panel.add(botoes[i]);
-            botoes[i].addActionListener(this);
+        buttons = new JButton[cardAmount];
+        for(int i=0; i<buttons.length; i++){
+            buttons[i] = new JButton(""+i, unrevealed);
+            panel.add(buttons[i]);
+            buttons[i].addActionListener(this);
         }
     }
 
@@ -142,11 +147,16 @@ public class Memoria extends JFrame implements ActionListener {
         int cardAmount;
         unrevealed = new ImageIcon(getClass().getResource("img/cartela.jpg"));
         text = new JTextArea();
-        text.setText("Bem vindo ao jogo da memória! \nAcertos:0 \nErros: 0");
+        /*timer = new GameTimer();
+        timer.startTimer();
+        JLabel timerLabel = new JLabel();
+        timerLabel = timer.getElapsedTime();*/
+        text.setText(gameInfo());
+        //text.add(timerLabel);
         text.setEditable(false);
         label = new JLabel();
         label.setIcon(top);
-        container = getContentPane();
+        //container = getContentPane();
         panel = new JPanel();
         switch(mode){
             case 1:
