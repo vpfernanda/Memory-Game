@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
  */
 public class Memoria extends JFrame implements ActionListener {
     private JTextArea text;
-    private JLabel label;
+    private JLabel labelTop;
     private List<Integer> randomList;
     private JButton buttons[];
     private JPanel panel;
@@ -38,7 +38,8 @@ public class Memoria extends JFrame implements ActionListener {
     private int cardAmount;
     private int hits=0;
     private int errors=0;
-//private GameTimer timer;
+    private GameTimer timer;
+    private JLabel timerJLabel;
     
     Memoria(int mode){
         super("Jogo da Memoria!");
@@ -73,7 +74,7 @@ public class Memoria extends JFrame implements ActionListener {
     }
     
     private String gameInfo(){
-        return "Bem vindo ao jogo da memória! \nAcertos:"+hits+"\nErros:"+errors+"\nTempo decorrido:"+"\n";
+        return "Bem vindo ao jogo da memória! \nAcertos:"+hits+"\nErros:"+errors;
     }  
 
     private void compareCards(){
@@ -154,8 +155,8 @@ public class Memoria extends JFrame implements ActionListener {
         text.setText(gameInfo());
         //text.add(timerLabel);
         text.setEditable(false);
-        label = new JLabel();
-        label.setIcon(top);
+        labelTop = new JLabel();
+        labelTop.setIcon(top);
         //container = getContentPane();
         panel = new JPanel();
         switch(mode){
@@ -167,10 +168,12 @@ public class Memoria extends JFrame implements ActionListener {
                 imageIconInicialize(cardAmount,"img/");
                 top = new ImageIcon (getClass().getResource("img/top.png"));
                 initUnrevealedCards(cardAmount);
-                
+                timer = new GameTimer();
+                timer.startTimer();
                 panel.setLayout(new GridLayout(4,5,5,5));
-                add(label, BorderLayout.PAGE_START);
-                add(text, BorderLayout.BEFORE_LINE_BEGINS);
+                add(labelTop, BorderLayout.PAGE_START);
+                add(text, BorderLayout.LINE_START);
+                add(timer.getElapsedTime(), BorderLayout.AFTER_LAST_LINE);
                 add(panel, BorderLayout.CENTER);
             }
 
