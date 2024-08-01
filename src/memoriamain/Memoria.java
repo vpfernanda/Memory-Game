@@ -37,7 +37,6 @@ public class Memoria extends JFrame implements ActionListener {
     private int clickedButton1;
     private int clickedButton2;
     private int clickCounter=0;
-    //private Container container;
     private int cardAmount;
     private int hits=0;
     private int errors=0;
@@ -79,7 +78,7 @@ public class Memoria extends JFrame implements ActionListener {
         return "Bem vindo ao jogo da memória! \nAcertos:"+hits+"\nErros:"+errors;
     }  
 
-    private void compareCards(){
+    public void compareCards(){
         if(img1.getDescription().equals(img2.getDescription()))
             playerHit();
         else
@@ -128,7 +127,7 @@ public class Memoria extends JFrame implements ActionListener {
         }    
     }
 
-    private void randomize(int cardAmount){
+    private List<Integer> randomize(int cardAmount){
         Random r = new Random();
         Integer n;
         while(randomList.size() < cardAmount ){
@@ -136,6 +135,7 @@ public class Memoria extends JFrame implements ActionListener {
             if(!(randomList.contains(n)))
                 randomList.add(n);
         }
+        return randomList;
     }
 
     private void initUnrevealedCards(int cardAmount){
