@@ -1,5 +1,6 @@
 package memoriamain;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,7 +28,7 @@ public class Graphic extends JFrame {
     //ActionListeners
     private ActionListener gameStartActionListener;
     private ActionListener cardButtonsActionListener;
-    private ActionListener endGameActionListener;
+    private ActionListener gameEndActionListener;
     private ActionListener modeButtonActionListener;
     private ActionListener pauseResumeGameButtonActionListener;
 
@@ -58,10 +59,21 @@ public class Graphic extends JFrame {
     private int clickCounter;
     private int clickedCardButton1;
     private int clickedCardButton2;
-    private int mode;
+    private int mode=1;
 
     //GameObject
     private Memoria memory;
+
+    public Graphic(){
+        super("Jogo da Memória!");
+        clickCounter = 0;
+        //importante: a linha abaixo deve ser implementada em cada filho da classe Graph
+        memory = new Memoria(mode);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setVisible(true);
+        loadAllPanels();
+    }
 
     public String getGameInfo() {
         return gameInfo;
@@ -103,15 +115,7 @@ public class Graphic extends JFrame {
         this.endGameString = endGameString;
     }
 
-    public Graphic(){
-        super("Jogo da Memória!");
-        clickCounter = 0;
-        //importante: a linha abaixo deve ser implementada em cada filho da classe Graph
-        memory = new Memoria(mode);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        this.setVisible(true);
-    }
+    
 
     private void initUnrevealedCardButtons(int cardAmount){
         cardButtons = new JButton[cardAmount];
@@ -180,12 +184,55 @@ public class Graphic extends JFrame {
         gameButtonsPanel.setLayout(new GridLayout(rows, columns));
     }
 
+    public void initActionButtonsPanel(){
+        actionButtonsPanel = new JPanel();
+        actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
+        initStartGameButton("Iniciar jogo");
+        initModeButton("Modo de Jogo");
+        initEndGameButton("Finalizar jogo");
+        actionButtonsPanel.add(startGameButton);
+        actionButtonsPanel.add(modeButton);
+        actionButtonsPanel.add(endGameButton);
+    }
+
     public void initStartGameButton(String buttonText){
         startGameButton = new JButton(buttonText);
         startGameButton.setBackground(Color.GREEN);
         startGameButton.setForeground(Color.BLACK);
+        initStartGameActionListener(20);
         startGameButton.addActionListener(gameStartActionListener);
     }
+
+    public void initModeButton(String buttonText){
+        modeButton = new JButton(buttonText);
+        modeButton.setBackground(Color.yellow);
+        modeButton.setForeground(Color.black);
+        //initActionListener
+        //addActionListener
+    }
+
+    public void initEndGameButton(String buttonText){
+        endGameButton = new JButton(buttonText);
+        endGameButton.setBackground(Color.RED);
+        endGameButton.setForeground(Color.BLACK);
+        endGameButton.addActionListener(gameEndActionListener);
+    }
+
+    private void initEndGameActionListener(int cardAmount){
+        gameEndActionListener = new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                timer.stopTimer();
+                //TODO
+                //Call JOptionPane
+            }
+        };
+    }
+
+    private void initLabelTop(){
+        ImageIcon topIcon = new ImageIcon(getClass().getResource("img/top.png"));
+        labelTop = new JLabel(topIcon);
+    }
+    
 
     private void initStartGameActionListener(int cardAmount){
         gameStartActionListener = new ActionListener() {
@@ -196,7 +243,18 @@ public class Graphic extends JFrame {
         };
     }
 
+    //it is really necessary?
     public void stopTimerFromInterface(){
         timer.stopTimer();
+    }
+
+    public void loadAllPanels(){
+        //initActionButtonsPanel();
+        //initGamePanel(20,5,4);
+        initLabelTop();
+        this.add(labelTop, BorderLayout.NORTH);
+        //this.add(actionButtonsPanel, BorderLayout.WEST);
+        //this.add(gameButtonsPanel, BorderLayout.CENTER);
+        //this.add(timer.getElapsedTime(), BorderLayout.PAGE_END);
     }
 }
