@@ -21,17 +21,7 @@ public class MemoriaMain {
         Memoria m;
         m = new Memoria(1);
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        m.setSize(1170,720);
+        m.setExtendedState(JFrame.MAXIMIZED_BOTH);
         m.setVisible(true);
-        
-     
-        
-        
-             
-                
-             
-        
-        //Apresentar na tela o resultado  
-        // TODO code application logic here
     }
 }

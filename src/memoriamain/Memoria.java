@@ -2,6 +2,7 @@
 package memoriamain;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 //import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 /**
  *
@@ -26,6 +28,7 @@ public class Memoria extends JFrame implements ActionListener {
     private JLabel labelTop;
     private List<Integer> randomList;
     private JButton buttons[];
+    private JButton startGameButton;
     private JPanel panel;
     private ImageIcon unrevealed, top;
     private ImageIcon icones[];
@@ -39,7 +42,6 @@ public class Memoria extends JFrame implements ActionListener {
     private int hits=0;
     private int errors=0;
     private GameTimer timer;
-    private JLabel timerJLabel;
     
     Memoria(int mode){
         super("Jogo da Memoria!");
@@ -87,8 +89,9 @@ public class Memoria extends JFrame implements ActionListener {
     private void playerHit(){
         hits++;
         if(hits==cardAmount/2){
-            //timer.stopTimer();
-            JOptionPane.showMessageDialog( null, "Você ganhou! Parabéns!");
+            timer.stopTimer();
+            JOptionPane.showMessageDialog( null, "Você ganhou! Parabéns! \n"+timer.getElapsedTime().getText());
+            
         }
         else {
             text.setText(gameInfo()+"\nPARABÉNS! ACERTOU!");
@@ -139,13 +142,19 @@ public class Memoria extends JFrame implements ActionListener {
         buttons = new JButton[cardAmount];
         for(int i=0; i<buttons.length; i++){
             buttons[i] = new JButton(""+i, unrevealed);
-            panel.add(buttons[i]);
+            //buttons[i].setHorizontalTextPosition(SwingConstants.CENTER);
+            //buttons[i].setVerticalTextPosition(SwingConstants.CENTER);
+            buttons[i].setActionCommand(""+i);
+            buttons[i].setText(null);
+            buttons[i].setContentAreaFilled(false);
+            buttons[i].setBorderPainted(true);
             buttons[i].addActionListener(this);
+            panel.add(buttons[i]);
+            
         }
     }
 
     private void loadMode(int mode){
-        int cardAmount;
         unrevealed = new ImageIcon(getClass().getResource("img/cartela.jpg"));
         text = new JTextArea();
         /*timer = new GameTimer();
@@ -157,24 +166,14 @@ public class Memoria extends JFrame implements ActionListener {
         text.setEditable(false);
         labelTop = new JLabel();
         labelTop.setIcon(top);
+        startGameButton = new JButton();
+        startGameButton.setText("Jogar");
         //container = getContentPane();
         panel = new JPanel();
         switch(mode){
             case 1:
             {
-                cardAmount = 20;
-                randomList = new ArrayList<>(cardAmount);
-                randomize(cardAmount);
-                imageIconInicialize(cardAmount,"img/");
-                top = new ImageIcon (getClass().getResource("img/top.png"));
-                initUnrevealedCards(cardAmount);
-                timer = new GameTimer();
-                timer.startTimer();
-                panel.setLayout(new GridLayout(4,5,5,5));
-                add(labelTop, BorderLayout.PAGE_START);
-                add(text, BorderLayout.LINE_START);
-                add(timer.getElapsedTime(), BorderLayout.AFTER_LAST_LINE);
-                add(panel, BorderLayout.CENTER);
+                loadMode1();
             }
 
             break;
@@ -182,6 +181,24 @@ public class Memoria extends JFrame implements ActionListener {
         }
         
        
+    }
+
+    public void loadMode1(){
+        cardAmount = 20;
+        randomList = new ArrayList<>(cardAmount);
+        randomize(cardAmount);
+        imageIconInicialize(cardAmount,"img/");
+        top = new ImageIcon (getClass().getResource("img/top.png"));
+        labelTop.setIcon(top);
+        initUnrevealedCards(cardAmount);
+        timer = new GameTimer();
+        timer.startTimer();
+        panel.setLayout(new GridLayout(4,5, 2, 2));
+        add(labelTop, BorderLayout.PAGE_START);
+        add(startGameButton, BorderLayout.BEFORE_LINE_BEGINS);
+        add(text, BorderLayout.LINE_START);
+        add(timer.getElapsedTime(), BorderLayout.AFTER_LAST_LINE);
+        add(panel, BorderLayout.CENTER);
     }
     
 }

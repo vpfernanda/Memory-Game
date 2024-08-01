@@ -38,6 +38,13 @@ public class GameTimer {
         time.stop();
     }
 
+    public void resetTimer(){
+        time.stop();
+        secondsElapsed = 0;
+    }
+
+
+
     public JLabel getElapsedTime(){
         return elapsedTime;
     }
