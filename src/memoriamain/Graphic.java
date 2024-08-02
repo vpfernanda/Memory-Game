@@ -60,7 +60,7 @@ public class Graphic extends JFrame {
         text = new JLabel();
         timer = new GameTimer();
         gameInfo = getGameInfo();
-        text.setText(getGameInfo());
+        text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
         text.setFont(new Font("ComicSans", Font.BOLD, 12));
         unrevealed = new ImageIcon(getClass().getResource("img/cartela.jpg"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,8 +72,8 @@ public class Graphic extends JFrame {
     }
 
     public String getGameInfo() {
-        return "<html><br>Informações da partida: <br>Acertos:" +memory.getPlayerHits()+
-        "<br>Erros: "+memory.getPlayerErrors()+"<br><html>";
+        return "\nAcertos:" +memory.getPlayerHits()+
+        " \nErros: "+memory.getPlayerErrors()+"";
     }
 
     
@@ -142,6 +142,7 @@ public class Graphic extends JFrame {
                             img1=(ImageIcon)cardButtons[clickedCardButton1].getIcon();
                             img2=(ImageIcon)cardButtons[clickedCardButton2].getIcon();
                             if(memory.compareCards(img1, img2)){
+                                //Playerhit!
                                 memory.playerHit();
                                 JOptionPane.showMessageDialog(null, getPlayerHitString());
                                 cardButtons[clickedCardButton1].setEnabled(false);
@@ -158,8 +159,13 @@ public class Graphic extends JFrame {
                             break;
                         }
                 }
+                updateGameInfoLabel();
             }
         };
+    }
+
+    private void updateGameInfoLabel(){
+        text.setText("<html><br>"+getGameInfo()+"<html><br>");
     }
 
     public void initRevealedCardIcons(ArrayList<Integer> randomList, String imagePath) {
@@ -230,6 +236,7 @@ public class Graphic extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 timer.resetTimer();
                 timer.startTimer();
+                updateGameInfoLabel();
                 for (int c=0; c<cardAmount; c++)   
                     cardButtons[c].setEnabled(true); 
                 startGameButton.setEnabled(false);
@@ -242,8 +249,10 @@ public class Graphic extends JFrame {
         gameEndActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 timer.stopTimer();
-                JOptionPane.showMessageDialog(null, "Jogo finalizado. \nTempo gasto: "
+                JOptionPane.showMessageDialog(null, "Jogo finalizado.\n "
                 +timer.toString()+"\n"+getGameInfo());
+                memory.gameReset();
+                timer.resetTimer();
                 startGameButton.setEnabled(true);
                 
             }
