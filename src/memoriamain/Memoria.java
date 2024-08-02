@@ -127,6 +127,12 @@ public class Memoria {
         return errors;
     }
 
+    public void gameReset(){
+        hits = 0;
+        errors = 0;
+        clickCounter = 0;
+    }
+
     
 
     // private void loadMode(int mode){
