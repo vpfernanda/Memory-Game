@@ -5,8 +5,6 @@
 package memoriamain;
 
 
-import javax.swing.JFrame;
-
 
 /**
  *
@@ -23,6 +21,6 @@ public class MemoriaMain {
         m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         m.setExtendedState(JFrame.MAXIMIZED_BOTH);
         m.setVisible(true);*/
-        Graphic g = new Graphic();
+        new Graphic(20);
     }
 }
