@@ -165,7 +165,7 @@ public class Graphic extends JFrame {
     }
 
     private void updateGameInfoLabel(){
-        text.setText("<html><br>"+getGameInfo()+"<html><br>");
+        text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
     }
 
     public void initRevealedCardIcons(ArrayList<Integer> randomList, String imagePath) {
