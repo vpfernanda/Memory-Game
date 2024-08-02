@@ -10,9 +10,10 @@ public class GameTimer {
     private JLabel elapsedTime;
     private ActionListener actionListener;
     int secondsElapsed=0;
+    private String elapsedTimeString;
 
     GameTimer(){
-        elapsedTime = new JLabel("Tempo decorrido: 00:00:00");
+        elapsedTime = new JLabel("<html>Tempo decorrido: 00:00:00<html>");
         actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 secondsElapsed++;
@@ -26,8 +27,8 @@ public class GameTimer {
         int hours = secondsElapsed / 3600;
         int minutes = (secondsElapsed % 3600) / 60;
         int seconds = secondsElapsed % 60;
-
-        elapsedTime.setText(String.format("Tempo decorrido: %02d:%02d:%02d", hours, minutes, seconds));
+        elapsedTimeString = String.format("Tempo decorrido: %02d:%02d:%02d", hours, minutes, seconds);
+        elapsedTime.setText(String.format("<html>"+elapsedTimeString+"<html>", hours, minutes, seconds));
     }
 
     public void startTimer(){
@@ -47,6 +48,10 @@ public class GameTimer {
 
     public JLabel getElapsedTime(){
         return elapsedTime;
+    }
+
+    public String toString(){
+        return elapsedTimeString;
     }
 
     
