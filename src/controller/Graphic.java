@@ -90,7 +90,7 @@ public class Graphic extends JFrame {
     }
 
     private void setAllFonts(String font){
-        text.setFont(new Font(font, Font.BOLD, 13));
+        text.setFont(new Font(font, Font.BOLD, 12));
         timer.getElapsedTime().setFont(new Font(font, Font.BOLD, 13));
     }
 
@@ -144,11 +144,12 @@ public class Graphic extends JFrame {
         }
     }
 
+    //Main method of the game. Here is where the "magic" happens :-)
     private void initCardButtonsActionListener() {
         cardButtonsActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 int buttonActionCommand = Integer.parseInt(event.getActionCommand());
-                updateGameInfoLabel();
+                //updateGameInfoLabel();
                 memory.clickRegister();
                 switch (memory.getClickCounter()) {
                     case 1: // Primeiro clique do usuário.
@@ -168,6 +169,7 @@ public class Graphic extends JFrame {
                             img2 = (ImageIcon) cardButtons[clickedCardButton2].getIcon();
                             if (memory.compareCards(img1, img2)) {
                                 memory.playerHit();
+                                updateGameInfoLabel();
                                 JOptionPane.showMessageDialog(null, getPlayerHitString());
                                 cardButtons[clickedCardButton1].setEnabled(false);
                                 cardButtons[clickedCardButton1].setDisabledIcon(img1);
@@ -175,6 +177,7 @@ public class Graphic extends JFrame {
                                 cardButtons[clickedCardButton2].setDisabledIcon(img2);
                             } else {
                                 memory.playerError();
+                                updateGameInfoLabel();
                                 JOptionPane.showMessageDialog(null, getPlayerErrorString());
                                 for (int c = 0; c < cardAmount; c++)
                                     cardButtons[c].setIcon(unrevealed);
