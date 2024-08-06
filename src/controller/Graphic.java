@@ -284,21 +284,36 @@ public class Graphic extends JFrame {
 
     private void initEndGameActionListener(){
         gameEndActionListener = new ActionListener() {
+            boolean newGame = false;
             public void actionPerformed(ActionEvent e){
                 timer.stopTimer();
-                int response = JOptionPane.showConfirmDialog(null, "Você tem certeza que deseja finalizar o jogo?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+                int response = JOptionPane.showConfirmDialog(null, 
+                "Você tem certeza que deseja finalizar o jogo?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
                 if(response==JOptionPane.CANCEL_OPTION){
                     timer.startTimer();
                     return;
                 }
                 else{
-                    JOptionPane.showMessageDialog(null, "Jogo finalizado.\n "
-                    +timer.toString()+"\n"+getGameInfo());
+                    String[] options = {"Novo jogo", "Sair do jogo"};
+                    int choice = JOptionPane.showOptionDialog(null, 
+                        "Jogo finalizado.\n "+timer.toString()+"\n"+getGameInfo(), 
+                    "Encerrar jogo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+                    options, options[0]);
                     memory.gameReset();
                     timer.resetTimer();
-                    for(int c=0; c<cardAmount; c++){
+                    switch (choice){
+                        case (JOptionPane.YES_OPTION):
+                            newGame = true;
+                            gameStartActionListener.actionPerformed(e);
+                            return;
+                        case (JOptionPane.NO_OPTION):
+                            System.exit(0);
+                    }
+                    if(!newGame){ //turn the cards setting them to unrevealed if the player does not start a new game
+                        for(int c=0; c<cardAmount; c++){
                         cardButtons[c].setEnabled(false);
                         cardButtons[c].setDisabledIcon(unrevealed);
+                    }
                     }
                     startGameButton.setEnabled(true);
                     endGameButton.setEnabled(false);
