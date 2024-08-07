@@ -175,14 +175,17 @@ public class Graphic extends JFrame {
                                 cardButtons[clickedCardButton1].setDisabledIcon(img1);
                                 cardButtons[clickedCardButton2].setEnabled(false);
                                 cardButtons[clickedCardButton2].setDisabledIcon(img2);
-                            } else {
-                                memory.playerError();
-                                updateGameInfoLabel();
-                                JOptionPane.showMessageDialog(null, getPlayerErrorString());
-                                for (int c = 0; c < cardAmount; c++)
-                                    cardButtons[c].setIcon(unrevealed);
-                            }
-                            break;
+                                if(memory.getPlayerHits()==cardAmount/2)
+                                    loadEndGameWindow(event);
+                                return;
+                            } 
+                            memory.playerError();
+                            updateGameInfoLabel();
+                            JOptionPane.showMessageDialog(null, getPlayerErrorString());
+                            for (int c = 0; c < cardAmount; c++)
+                                cardButtons[c].setIcon(unrevealed);
+                            
+                            return;
                         }
                 }
             }
@@ -284,7 +287,6 @@ public class Graphic extends JFrame {
 
     private void initEndGameActionListener(){
         gameEndActionListener = new ActionListener() {
-            boolean newGame = false;
             public void actionPerformed(ActionEvent e){
                 timer.stopTimer();
                 int response = JOptionPane.showConfirmDialog(null, 
@@ -294,32 +296,42 @@ public class Graphic extends JFrame {
                     return;
                 }
                 else{
-                    String[] options = {"Novo jogo", "Sair do jogo"};
-                    int choice = JOptionPane.showOptionDialog(null, 
-                        "Jogo finalizado.\n "+timer.toString()+"\n"+getGameInfo(), 
-                    "Encerrar jogo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-                    options, options[0]);
-                    memory.gameReset();
-                    timer.resetTimer();
-                    switch (choice){
-                        case (JOptionPane.YES_OPTION):
-                            newGame = true;
-                            gameStartActionListener.actionPerformed(e);
-                            return;
-                        case (JOptionPane.NO_OPTION):
-                            System.exit(0);
-                    }
-                    if(!newGame){ //turn the cards setting them to unrevealed if the player does not start a new game
-                        for(int c=0; c<cardAmount; c++){
-                        cardButtons[c].setEnabled(false);
-                        cardButtons[c].setDisabledIcon(unrevealed);
-                    }
-                    }
+                    loadEndGameWindow(e);
+                    // if(!newGame){ //turn the cards setting them to unrevealed if the player does not start a new game
+                    //     for(int c=0; c<cardAmount; c++){
+                    //     cardButtons[c].setEnabled(false);
+                    //     cardButtons[c].setDisabledIcon(unrevealed);
+                    //     }
+                    // }
                     startGameButton.setEnabled(true);
                     endGameButton.setEnabled(false);
                 }
             }
         };
+    }
+
+    private void loadEndGameWindow(ActionEvent e){
+        timer.stopTimer();
+        String message;
+        if(memory.getPlayerHits()==cardAmount/2){
+            message = "Você ganhou!";
+        }
+        else
+            message = "Jogo finalizado";
+        String[] options = {"Novo jogo", "Sair do jogo"};
+        int choice = JOptionPane.showOptionDialog(null, 
+            message+"\n"+timer.toString()+"\n"+getGameInfo(), "Encerrar jogo", 
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+            options, options[0]);
+            memory.gameReset();
+            timer.resetTimer();
+            switch (choice){
+                case (JOptionPane.YES_OPTION):
+                    gameStartActionListener.actionPerformed(e);
+                    break;
+                case (JOptionPane.NO_OPTION):
+                    System.exit(0);
+            }
     }
 
     protected JLabel initLabelTop() {
