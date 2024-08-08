@@ -1,4 +1,4 @@
-package controller;
+package memoriamain;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Graphic extends JFrame {
     // Panels
     private JPanel actionButtonsPanel;
-    protected JPanel gameButtonsPanel;
+    private JPanel gameButtonsPanel;
 
     // Buttons
     private JButton[] cardButtons;
@@ -22,77 +22,61 @@ public class Graphic extends JFrame {
     private ActionListener gameStartActionListener;
     private ActionListener gameEndActionListener;
 
+
     // Labels
     private JLabel labelTop;
     private JLabel text;
 
     // Image Icons
-    private ImageIcon unrevealed; //Image of unrevealed cards
+    private ImageIcon unrevealed;
+    private ImageIcon top;
     private ImageIcon icons[];
     private ImageIcon img1; //First card of the attempt pair
     private ImageIcon img2; //Second card of the attempt pair
 
     // Timer
-    protected GameTimer timer;
+    private GameTimer timer;
 
     //Strings
+    private String gameInfo;
+    private String playerHitString;
+    private String playerErrorString;
     private String gameWarningString;
     private String endGameString;
-    protected String imagePath;
 
     // GameObject
-    protected Memory memory;
+    private Memoria memory;
 
     // Integers
     private int clickedCardButton1;
     private int clickedCardButton2;
-    protected int cardAmount; //IMPORTANT VARIABLE
-    protected int rows;
-    protected int columns;
+    private int mode = 1;
+    private int cardAmount;
 
-    private Dimension gamePanelDimension;
-
-    //Default parameters to Graphic (superclass)
-    //cardAmount: 20
-    //imagePath: "img/Default/"
-    //columns: 5
-    //rows: 4
-
-    public Graphic(int cardAmount, String imagePath, int columns, int rows, Dimension gamePanelDimension) {
+    public Graphic(int cardAmount) {
         super("Jogo da Memória!");
         this.cardAmount = cardAmount;
-        memory = new Memory(cardAmount);
-        this.rows = rows;
-        this.columns = columns;
-        this.gamePanelDimension = gamePanelDimension;
-        gameWarningString = "Atenção: Você clicou na mesma carta. Escolha uma carta DIFERENTE!";
+        memory = new Memoria();
         text = new JLabel();
         timer = new GameTimer();
-        this.imagePath = imagePath;
-        setUnrevealed(imagePath);
+        gameInfo = getGameInfo();
         text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
-        setAllFonts("Comic Sans MS");
-        add(loadMainPanel());
-
-        // Configurações da janela
+        text.setFont(new Font("ComicSans", Font.BOLD, 12));
+        unrevealed = new ImageIcon(getClass().getResource("img/cartela.jpg"));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiza a janela
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        // Configurando a interface
+        add(loadMainPanel());
         setVisible(true);
     }
 
-    protected void setUnrevealed(String imgPath){
-        unrevealed = new ImageIcon(getClass().getResource(imgPath+"cartela.jpg"));
-    }
-
     public String getGameInfo() {
-        return "\nAcertos: " +memory.getPlayerHits()+
+        return "\nAcertos:" +memory.getPlayerHits()+
         " \nErros: "+memory.getPlayerErrors()+"";
     }
 
-    private void setAllFonts(String font){
-        text.setFont(new Font(font, Font.BOLD, 12));
-        timer.getElapsedTime().setFont(new Font(font, Font.BOLD, 13));
-    }
+    
 
     public String getPlayerHitString() {
         return "Parabéns! \nVocê acertou!" + "\nAcertos: "+memory.getPlayerHits()+"\nErros: "+memory.getPlayerErrors();
@@ -102,13 +86,14 @@ public class Graphic extends JFrame {
         return "Você errou!" + "\nAcertos: "+memory.getPlayerHits()+"\nErros: "+memory.getPlayerErrors();
     }
 
+
     public String getGameWarningString() {
         return gameWarningString;
     }
 
-    public void setGameWarningString(String gameWarningString) {
-         this.gameWarningString = gameWarningString;
-    }
+    // public void setGameWarningString(String gameWarningString) {
+    //     this.gameWarningString = gameWarningString;
+    // }
 
     public String getEndGameString() {
         return endGameString;
@@ -118,90 +103,69 @@ public class Graphic extends JFrame {
         this.endGameString = endGameString;
     }
 
+
     private void initUnrevealedCardButtons(int cardAmount, boolean enable) {
         initCardButtonsActionListener();
         cardButtons = new JButton[cardAmount];
         for (int i = 0; i < cardButtons.length; i++) {
-            cardButtons[i] = new JButton("" + i, unrevealed) {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    if (!isEnabled() && getDisabledIcon() != null) {
-                        getDisabledIcon().paintIcon(this, g, 0, 0);
-                    }
-                }
-            };
+            cardButtons[i] = new JButton("" + i, unrevealed);
             cardButtons[i].setActionCommand("" + i);
             cardButtons[i].setText(null);
             cardButtons[i].setContentAreaFilled(false);
             cardButtons[i].setEnabled(enable);
             cardButtons[i].setDisabledIcon(unrevealed);
-            cardButtons[i].setMargin(new Insets(0, 0, 0, 0));
             cardButtons[i].setBorderPainted(true);
-            cardButtons[i].setHorizontalAlignment(SwingConstants.CENTER);
-            cardButtons[i].setVerticalAlignment(SwingConstants.CENTER);
             cardButtons[i].addActionListener(cardButtonsActionListener);
         }
     }
 
-    //Main method of the game. Here is where the "magic" happens :-)
     private void initCardButtonsActionListener() {
+        initRevealedCardIcons(memory.randomize(20), "img/");
         cardButtonsActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 int buttonActionCommand = Integer.parseInt(event.getActionCommand());
-                //updateGameInfoLabel();
+
                 memory.clickRegister();
                 switch (memory.getClickCounter()) {
-                    case 1: // Primeiro clique do usuário.
+                    case 1: // First user click.
                         clickedCardButton1 = buttonActionCommand;
-                        setButtonIcon(cardButtons[clickedCardButton1], icons[clickedCardButton1]);
+                        cardButtons[clickedCardButton1].setIcon(icons[clickedCardButton1]);
                         break;
-                    case 2: // Segundo clique do usuário.
+                    case 2: // Second user click.
                         clickedCardButton2 = buttonActionCommand;
                         if (clickedCardButton1 == clickedCardButton2) {
-                            text.setText(text.getText() + "<html><br>" + getGameWarningString() + "</html>");
-                            text.setForeground(Color.RED);
+                            text.setText(text.getText()+"<html><br>Warning: Same card clicked.</html>");
                             memory.clickCancel();
                             break;
                         } else {
-                            setButtonIcon(cardButtons[clickedCardButton2], icons[clickedCardButton2]);
-                            img1 = (ImageIcon) cardButtons[clickedCardButton1].getIcon();
-                            img2 = (ImageIcon) cardButtons[clickedCardButton2].getIcon();
-                            if (memory.compareCards(img1, img2)) {
+                            cardButtons[clickedCardButton2].setIcon(icons[clickedCardButton2]);
+                            img1=(ImageIcon)cardButtons[clickedCardButton1].getIcon();
+                            img2=(ImageIcon)cardButtons[clickedCardButton2].getIcon();
+                            if(memory.compareCards(img1, img2)){
+                                //Playerhit!
                                 memory.playerHit();
-                                updateGameInfoLabel();
                                 JOptionPane.showMessageDialog(null, getPlayerHitString());
                                 cardButtons[clickedCardButton1].setEnabled(false);
                                 cardButtons[clickedCardButton1].setDisabledIcon(img1);
                                 cardButtons[clickedCardButton2].setEnabled(false);
                                 cardButtons[clickedCardButton2].setDisabledIcon(img2);
-                                if(memory.getPlayerHits()==cardAmount/2)
-                                    loadEndGameWindow(event);
-                                return;
-                            } 
-                            memory.playerError();
-                            updateGameInfoLabel();
-                            JOptionPane.showMessageDialog(null, getPlayerErrorString());
-                            for (int c = 0; c < cardAmount; c++)
-                                cardButtons[c].setIcon(unrevealed);
-                            
-                            return;
+                            }
+                            else{
+                                memory.playerError();
+                                JOptionPane.showMessageDialog(null, getPlayerErrorString());
+                                for(int c=0; c<cardAmount; c++)
+                                    cardButtons[c].setIcon(unrevealed);    
+                            }
+                            break;
                         }
                 }
+                updateGameInfoLabel();
             }
         };
     }
 
-    private void setButtonIcon(JButton button, ImageIcon icon) {
-        Image scaledImage = icon.getImage().getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH);
-        ImageIcon image = new ImageIcon(scaledImage);
-        image.setDescription(icon.getDescription());
-        button.setIcon(image);
-    }
-
     private void updateGameInfoLabel(){
         text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
-        text.setForeground(Color.BLACK);
     }
 
     public void initRevealedCardIcons(ArrayList<Integer> randomList, String imagePath) {
@@ -218,14 +182,13 @@ public class Graphic extends JFrame {
         }
     }
 
-    public JScrollPane initGamePanel(int columns, int rows) {
+    public JPanel initGamePanel(int cardAmount, int columns, int rows) {
         gameButtonsPanel = new JPanel(new GridLayout(rows, columns, 5, 5));
-        gameButtonsPanel.setPreferredSize(gamePanelDimension);
         initUnrevealedCardButtons(cardAmount, false);
         for (JButton b : cardButtons) {
             gameButtonsPanel.add(b);
         }
-        return new JScrollPane(gameButtonsPanel); // Adiciona o painel ao JScrollPane
+        return gameButtonsPanel;
     }
 
     public JPanel initActionButtonsPanel() {
@@ -249,7 +212,7 @@ public class Graphic extends JFrame {
         startGameButton = new JButton(buttonText);
         startGameButton.setBackground(Color.GREEN);
         startGameButton.setForeground(Color.BLACK);
-        initStartGameActionListener();
+        initStartGameActionListener(20);
         startGameButton.addActionListener(gameStartActionListener);
     }
 
@@ -263,78 +226,40 @@ public class Graphic extends JFrame {
         endGameButton = new JButton(buttonText);
         endGameButton.setBackground(Color.RED);
         endGameButton.setForeground(Color.BLACK);
-        initEndGameActionListener();
+        initEndGameActionListener(20);
         endGameButton.setEnabled(false);
         endGameButton.addActionListener(gameEndActionListener);
     }
 
-    private void initStartGameActionListener() {
+    private void initStartGameActionListener(int cardAmount) {
         gameStartActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                for (int c=0; c<cardAmount; c++){
-                    cardButtons[c].setIcon(unrevealed);
-                    cardButtons[c].setEnabled(true);
-                }   
-                initRevealedCardIcons(memory.randomize(), imagePath);
                 timer.resetTimer();
                 timer.startTimer();
                 updateGameInfoLabel();
+                for (int c=0; c<cardAmount; c++)   
+                    cardButtons[c].setEnabled(true); 
                 startGameButton.setEnabled(false);
                 endGameButton.setEnabled(true);
             }
         };
     }
 
-    private void initEndGameActionListener(){
+    private void initEndGameActionListener(int cardAmount){
         gameEndActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 timer.stopTimer();
-                int response = JOptionPane.showConfirmDialog(null, 
-                "Você tem certeza que deseja finalizar o jogo?", "Confirmação", JOptionPane.OK_CANCEL_OPTION);
-                if(response==JOptionPane.CANCEL_OPTION){
-                    timer.startTimer();
-                    return;
-                }
-                else{
-                    loadEndGameWindow(e);
-                    // if(!newGame){ //turn the cards setting them to unrevealed if the player does not start a new game
-                    //     for(int c=0; c<cardAmount; c++){
-                    //     cardButtons[c].setEnabled(false);
-                    //     cardButtons[c].setDisabledIcon(unrevealed);
-                    //     }
-                    // }
-                    startGameButton.setEnabled(true);
-                    endGameButton.setEnabled(false);
-                }
+                JOptionPane.showMessageDialog(null, "Jogo finalizado.\n "
+                +timer.toString()+"\n"+getGameInfo());
+                memory.gameReset();
+                timer.resetTimer();
+                startGameButton.setEnabled(true);
+                
             }
         };
     }
 
-    private void loadEndGameWindow(ActionEvent e){
-        timer.stopTimer();
-        String message;
-        if(memory.getPlayerHits()==cardAmount/2){
-            message = "Você ganhou!";
-        }
-        else
-            message = "Jogo finalizado";
-        String[] options = {"Novo jogo", "Sair do jogo"};
-        int choice = JOptionPane.showOptionDialog(null, 
-            message+"\n"+timer.toString()+"\n"+getGameInfo(), "Encerrar jogo", 
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
-            options, options[0]);
-            memory.gameReset();
-            timer.resetTimer();
-            switch (choice){
-                case (JOptionPane.YES_OPTION):
-                    gameStartActionListener.actionPerformed(e);
-                    break;
-                case (JOptionPane.NO_OPTION):
-                    System.exit(0);
-            }
-    }
-
-    protected JLabel initLabelTop() {
+    private JLabel initLabelTop() {
         ImageIcon topIcon = new ImageIcon(getClass().getResource("img/top.png"));
         labelTop = new JLabel(topIcon, JLabel.CENTER);
         return labelTop;
@@ -350,7 +275,8 @@ public class Graphic extends JFrame {
     private JPanel loadSecondaryPanel() {
         JPanel secondaryPanel = new JPanel(new BorderLayout());
         secondaryPanel.add(initActionButtonsPanel(), BorderLayout.WEST);
-        secondaryPanel.add(initGamePanel(columns, rows), BorderLayout.CENTER);
+        secondaryPanel.add(initGamePanel(20, 5, 4), BorderLayout.CENTER);
         return secondaryPanel;
     }
+
 }
