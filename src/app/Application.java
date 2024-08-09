@@ -17,7 +17,7 @@ public class Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Graphic g = new MediumMode("Food/");
-        //ModesFrame modesFrame = new ModesFrame();
+        //Graphic g = new MediumMode("Food/");
+        new ModesFrame();
     }
 }
