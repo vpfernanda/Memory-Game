@@ -12,12 +12,16 @@ import controller.*;
  * @author Fernanda
  */
 public class Application {
-
+        public static ModesFrame modesFrame;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //Graphic g = new MediumMode("Food/");
-        new ModesFrame();
+        modesFrame = new ModesFrame();
+        if(!modesFrame.isVisible()){
+            String mode = modesFrame.getChosenMode();
+            
+        }
     }
+        
 }

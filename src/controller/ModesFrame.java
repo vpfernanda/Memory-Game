@@ -31,6 +31,7 @@ public class ModesFrame extends JFrame{
     private  ArrayList<String> themes;
     private JLabel modesLabel;
     private JLabel themesLabel;
+    private JLabel playerNameLabel;
     private ButtonGroup modesButtonGroup;
     private ButtonGroup themesButtonGroup;
     private ArrayList<JRadioButton> modesButtonsList;
@@ -42,7 +43,10 @@ public class ModesFrame extends JFrame{
     private String username;
     private String chosenMode;
     private String chosenTheme;
+    private boolean firstOpen;
+    private Graphic graphic;
 
+    //is firstOpen really necessary?
     
     public ModesFrame(){
         super("Escolher um modo de jogo");
@@ -50,6 +54,7 @@ public class ModesFrame extends JFrame{
         themesButtonsList = new ArrayList<>();
         modesButtonGroup = new ButtonGroup();
         themesButtonGroup = new ButtonGroup();
+        firstOpen = true;
         this.setMaximumSize(new Dimension(300, 300));
         this.setMinimumSize(new Dimension(300, 300));
         this.setPreferredSize(new Dimension(300, 300));
@@ -81,9 +86,9 @@ public class ModesFrame extends JFrame{
 
     private void initThemesArray(){
         themes = new ArrayList<>();
-        themes.add("Animais");
-        themes.add("Comida");
-        themes.add("Objetos");
+        themes.add("Animals");
+        themes.add("Food");
+        themes.add("Objects");
     }
 
     private void initRadioButtonsGroup(ArrayList<String> arrayList, JPanel p, ButtonGroup bg, ArrayList<JRadioButton> list){
@@ -142,7 +147,7 @@ public class ModesFrame extends JFrame{
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(Box.createVerticalGlue()); // Espaço flexível vertical
         panel.add(Box.createHorizontalGlue()); // Espaço flexível horizontal
-        JLabel playerNameLabel = new JLabel("Como você quer ser chamado?");
+        playerNameLabel = new JLabel("Como você quer ser chamado?");
 
         playerNameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(playerNameLabel);
@@ -175,7 +180,13 @@ public class ModesFrame extends JFrame{
     private void initCloseWindowButtonActionListener(){
         closeWindowButtonAListener = new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                System.exit(0);
+                if(firstOpen)
+                    System.exit(0);
+                //important knowledge gained below!
+                //as I'm referencing the instance of THIS class inside the actionPerformed's method declaration
+                //(which belongs to another class), "this" is not enough to make a reference.
+                //Syntax: ClassName.this.method(); :-) 
+                ModesFrame.this.setVisible(false);
             }
         };
     }
@@ -195,8 +206,29 @@ public class ModesFrame extends JFrame{
                 chosenMode = getSelectedRadio(modesButtonsList);
                 chosenTheme = getSelectedRadio(themesButtonsList);   
                 hideModesFrame();  
+                if(firstOpen){
+                    graphicInitializer();
+                }
+                else if(graphic!=null){
+                    graphic.dispose();
+                    graphic = null;
+                    graphicInitializer();
+                }
+                    
+                
             }
         };
+    }
+
+    private void graphicInitializer(){
+        switch (chosenMode){
+            case "Fácil":
+                graphic = new EasyMode(chosenTheme+"/");
+                break;
+            case "Médio":
+                graphic = new MediumMode(chosenTheme+"/");
+                break;
+            }
     }
 
     private void hideModesFrame(){
@@ -221,6 +253,16 @@ public class ModesFrame extends JFrame{
 
     public String getChosenTheme() {
         return chosenTheme;
+    }
+
+    public void loadModesFrameThroughButton(){
+            playerNameTextField.setEnabled(false);
+            this.repaint();
+            this.setVisible(true);
+    }
+
+    public void setFirstOpen(boolean b){
+        firstOpen = b;
     }
 
     
