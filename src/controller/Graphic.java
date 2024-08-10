@@ -1,18 +1,22 @@
 package controller;
 
 import javax.swing.*;
+import app.Application;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
 
 public class Graphic extends JFrame {
     // Panels
-    private JPanel actionButtonsPanel;
+    protected JPanel actionButtonsPanel;
     protected JPanel gameButtonsPanel;
 
     // Buttons
-    private JButton[] cardButtons;
+    protected JButton[] cardButtons;
     private JButton startGameButton;
     private JButton endGameButton;
     private JButton modeButton;
@@ -21,10 +25,12 @@ public class Graphic extends JFrame {
     private ActionListener cardButtonsActionListener;
     private ActionListener gameStartActionListener;
     private ActionListener gameEndActionListener;
+    private ActionListener modeButtonActionListener;
 
     // Labels
     private JLabel labelTop;
     private JLabel text;
+    private JLabel userGreetings;
 
     // Image Icons
     private ImageIcon unrevealed; //Image of unrevealed cards
@@ -49,8 +55,10 @@ public class Graphic extends JFrame {
     protected int cardAmount; //IMPORTANT VARIABLE
     protected int rows;
     protected int columns;
+    
 
-    private Dimension gamePanelDimension;
+    protected Dimension gamePanelDimension;
+
 
     //Default parameters to Graphic (superclass)
     //cardAmount: 20
@@ -60,88 +68,112 @@ public class Graphic extends JFrame {
 
     public Graphic(int cardAmount, String imagePath, int columns, int rows, Dimension gamePanelDimension) {
         super("Jogo da Memória!");
+        //passing parameters to class atributes.
         this.cardAmount = cardAmount;
-        memory = new Memory(cardAmount);
         this.rows = rows;
         this.columns = columns;
-        this.gamePanelDimension = gamePanelDimension;
-        gameWarningString = "Atenção: Você clicou na mesma carta. Escolha uma carta DIFERENTE!";
-        text = new JLabel();
-        timer = new GameTimer();
         this.imagePath = imagePath;
-        setUnrevealed(imagePath);
+        this.gamePanelDimension = gamePanelDimension;
+        //instancing class atributes
+        this.memory = new Memory(cardAmount);
+        this.timer = new GameTimer();
+        this.text = new JLabel();
+        this.userGreetings = new JLabel();
+        //some "set" methods being called
         text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
+        this.gameWarningString = "Atenção: Você clicou na mesma carta. Escolha uma carta DIFERENTE!";
+        this.userGreetings.setText("<html>Olá, "+Application.modesFrame.getUsername()+"!</html>");
+        this.userGreetings.setForeground(Color.BLUE);
+        this.setUnrevealed(imagePath);
         setAllFonts("Comic Sans MS");
+        //render all elements
         add(loadMainPanel());
-
-        // Configurações da janela
+        // Window configs
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximiza a janela
         setVisible(true);
+        //Disabled icons (unrevealed) are now renderized according to the correct size button.
+        SwingUtilities.invokeLater(this::updateDisabledIcons); // Garanta que os ícones sejam atualizados após a renderização
     }
 
-    protected void setUnrevealed(String imgPath){
+    private void setUnrevealed(String imgPath){
         unrevealed = new ImageIcon(getClass().getResource(imgPath+"cartela.jpg"));
     }
 
-    public String getGameInfo() {
+    private String getGameInfo() {
         return "\nAcertos: " +memory.getPlayerHits()+
         " \nErros: "+memory.getPlayerErrors()+"";
     }
 
     private void setAllFonts(String font){
-        text.setFont(new Font(font, Font.BOLD, 12));
+        text.setFont(new Font(font, Font.BOLD, 13));
         timer.getElapsedTime().setFont(new Font(font, Font.BOLD, 13));
+        userGreetings.setFont(new Font(font, Font.BOLD, 13));
     }
 
-    public String getPlayerHitString() {
+    private String getPlayerHitString() {
         return "Parabéns! \nVocê acertou!" + "\nAcertos: "+memory.getPlayerHits()+"\nErros: "+memory.getPlayerErrors();
     }
 
-    public String getPlayerErrorString() {
+    private String getPlayerErrorString() {
         return "Você errou!" + "\nAcertos: "+memory.getPlayerHits()+"\nErros: "+memory.getPlayerErrors();
     }
 
-    public String getGameWarningString() {
+    private String getGameWarningString() {
         return gameWarningString;
     }
 
-    public void setGameWarningString(String gameWarningString) {
+    private void setGameWarningString(String gameWarningString) {
          this.gameWarningString = gameWarningString;
     }
 
-    public String getEndGameString() {
+    private String getEndGameString() {
         return endGameString;
     }
 
-    public void setEndGameString(String endGameString) {
+    private void setEndGameString(String endGameString) {
         this.endGameString = endGameString;
     }
 
-    private void initUnrevealedCardButtons(int cardAmount, boolean enable) {
+    protected void initUnrevealedCardButtons(int cardAmount, boolean enable) {
         initCardButtonsActionListener();
         cardButtons = new JButton[cardAmount];
         for (int i = 0; i < cardButtons.length; i++) {
-            cardButtons[i] = new JButton("" + i, unrevealed) {
+            cardButtons[i] = new JButton("" + i, unrevealed)
+            
+            {
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
-                    if (!isEnabled() && getDisabledIcon() != null) {
-                        getDisabledIcon().paintIcon(this, g, 0, 0);
-                    }
+                    
+                        if (!isEnabled() && getDisabledIcon() != null) {
+                            getDisabledIcon().paintIcon(this, g, 0, 0);
+                        }
+                    
                 }
             };
             cardButtons[i].setActionCommand("" + i);
             cardButtons[i].setText(null);
             cardButtons[i].setContentAreaFilled(false);
-            cardButtons[i].setEnabled(enable);
-            cardButtons[i].setDisabledIcon(unrevealed);
+            cardButtons[i].setDisabledIcon(unrevealed); //ATTENTION
+            cardButtons[i].setEnabled(false);
             cardButtons[i].setMargin(new Insets(0, 0, 0, 0));
             cardButtons[i].setBorderPainted(true);
             cardButtons[i].setHorizontalAlignment(SwingConstants.CENTER);
             cardButtons[i].setVerticalAlignment(SwingConstants.CENTER);
             cardButtons[i].addActionListener(cardButtonsActionListener);
+            
         }
+    }
+
+    protected void updateDisabledIcons() {
+        SwingUtilities.invokeLater(() -> {
+            for (JButton b : cardButtons) {
+                setButtonIcon(b, unrevealed, false);
+                //b.setEnabled(false);
+            }
+            //firstLoad = false;
+        });
     }
 
     //Main method of the game. Here is where the "magic" happens :-)
@@ -152,21 +184,25 @@ public class Graphic extends JFrame {
                 //updateGameInfoLabel();
                 memory.clickRegister();
                 switch (memory.getClickCounter()) {
-                    case 1: // Primeiro clique do usuário.
+                    case 1: // First user click
                         clickedCardButton1 = buttonActionCommand;
-                        setButtonIcon(cardButtons[clickedCardButton1], icons[clickedCardButton1]);
+                        setButtonIcon(cardButtons[clickedCardButton1], icons[clickedCardButton1], true);
                         break;
-                    case 2: // Segundo clique do usuário.
+                    case 2: // Second user click
                         clickedCardButton2 = buttonActionCommand;
+                        //User clicked the same card?
                         if (clickedCardButton1 == clickedCardButton2) {
                             text.setText(text.getText() + "<html><br>" + getGameWarningString() + "</html>");
                             text.setForeground(Color.RED);
                             memory.clickCancel();
                             break;
-                        } else {
-                            setButtonIcon(cardButtons[clickedCardButton2], icons[clickedCardButton2]);
+                        } 
+                        else {
+                            //Setting img1 and img2 to compare
+                            setButtonIcon(cardButtons[clickedCardButton2], icons[clickedCardButton2], true);
                             img1 = (ImageIcon) cardButtons[clickedCardButton1].getIcon();
                             img2 = (ImageIcon) cardButtons[clickedCardButton2].getIcon();
+                            //Comparing cards -> MAYBE it would turn up to be a method
                             if (memory.compareCards(img1, img2)) {
                                 memory.playerHit();
                                 updateGameInfoLabel();
@@ -175,15 +211,18 @@ public class Graphic extends JFrame {
                                 cardButtons[clickedCardButton1].setDisabledIcon(img1);
                                 cardButtons[clickedCardButton2].setEnabled(false);
                                 cardButtons[clickedCardButton2].setDisabledIcon(img2);
+                                //Player found all cards?
                                 if(memory.getPlayerHits()==cardAmount/2)
                                     loadEndGameWindow(event);
                                 return;
                             } 
+                            //Then, user has not found a pair...
                             memory.playerError();
                             updateGameInfoLabel();
                             JOptionPane.showMessageDialog(null, getPlayerErrorString());
+                            //Set all remaing cards to unrevealed
                             for (int c = 0; c < cardAmount; c++)
-                                cardButtons[c].setIcon(unrevealed);
+                                setButtonIcon(cardButtons[c],unrevealed, true);
                             
                             return;
                         }
@@ -192,11 +231,19 @@ public class Graphic extends JFrame {
         };
     }
 
-    private void setButtonIcon(JButton button, ImageIcon icon) {
-        Image scaledImage = icon.getImage().getScaledInstance(button.getWidth(), button.getHeight(), Image.SCALE_SMOOTH);
+    private void setButtonIcon(JButton button, ImageIcon icon, boolean enabled) {
+        int width = button.getWidth();
+        int height = button.getHeight();
+        //Resizing image to make it proportional to the button
+        Image scaledImage = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         ImageIcon image = new ImageIcon(scaledImage);
+        //...but without losing the image description, which allows us to compare the pairs.
         image.setDescription(icon.getDescription());
-        button.setIcon(image);
+        if(enabled){
+            button.setIcon(image);
+            return;
+        }
+        button.setDisabledIcon(image);
     }
 
     private void updateGameInfoLabel(){
@@ -205,10 +252,10 @@ public class Graphic extends JFrame {
     }
 
     public void initRevealedCardIcons(ArrayList<Integer> randomList, String imagePath) {
-        int cardAmount = randomList.size();
-        icons = new ImageIcon[cardAmount];
+        icons = new ImageIcon[this.cardAmount];
         int counterList = 0;
-        for (int counter = 0; counter < cardAmount / 2; counter++) {
+        //is there any way to refactor this for loop?
+        for (int counter = 0; counter < this.cardAmount / 2; counter++) {
             icons[randomList.get(counterList)] = new ImageIcon(getClass().getResource(imagePath + "img" + (counter + 1) + ".jpg"));
             icons[randomList.get(counterList)].setDescription("" + (counter + 1));
             counterList++;
@@ -225,16 +272,18 @@ public class Graphic extends JFrame {
         for (JButton b : cardButtons) {
             gameButtonsPanel.add(b);
         }
-        return new JScrollPane(gameButtonsPanel); // Adiciona o painel ao JScrollPane
+        return new JScrollPane(gameButtonsPanel); //Adding the panel.
     }
-
+    
     public JPanel initActionButtonsPanel() {
         actionButtonsPanel = new JPanel();
+        //allows us to render the components towards vertical
         actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
         actionButtonsPanel.setPreferredSize(new Dimension(130, getHeight()));
         initStartGameButton("<html>Iniciar jogo<html>");
         initModeButton("<html>Modo de Jogo<html>");
         initEndGameButton("<html>Finalizar jogo<html>");
+        actionButtonsPanel.add(userGreetings);
         actionButtonsPanel.add(startGameButton);
         actionButtonsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         actionButtonsPanel.add(modeButton);
@@ -242,7 +291,14 @@ public class Graphic extends JFrame {
         actionButtonsPanel.add(endGameButton);
         actionButtonsPanel.add(text);
         actionButtonsPanel.add(timer.getElapsedTime());
+        actionButtonsPanelResize();
         return actionButtonsPanel;
+    }
+
+    public void actionButtonsPanelResize(){
+        actionButtonsPanel.setMinimumSize(new Dimension(175, MAXIMIZED_VERT));
+        actionButtonsPanel.setPreferredSize(new Dimension(175, MAXIMIZED_VERT));
+        actionButtonsPanel.setMaximumSize(new Dimension(175, MAXIMIZED_VERT));
     }
 
     public void initStartGameButton(String buttonText) {
@@ -257,6 +313,8 @@ public class Graphic extends JFrame {
         modeButton = new JButton(buttonText);
         modeButton.setBackground(Color.YELLOW);
         modeButton.setForeground(Color.BLACK);
+        initModeButtonActionListener();
+        modeButton.addActionListener(modeButtonActionListener);
     }
 
     public void initEndGameButton(String buttonText) {
@@ -272,7 +330,7 @@ public class Graphic extends JFrame {
         gameStartActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (int c=0; c<cardAmount; c++){
-                    cardButtons[c].setIcon(unrevealed);
+                    setButtonIcon(cardButtons[c],unrevealed,true);
                     cardButtons[c].setEnabled(true);
                 }   
                 initRevealedCardIcons(memory.randomize(), imagePath);
@@ -297,16 +355,20 @@ public class Graphic extends JFrame {
                 }
                 else{
                     loadEndGameWindow(e);
-                    // if(!newGame){ //turn the cards setting them to unrevealed if the player does not start a new game
-                    //     for(int c=0; c<cardAmount; c++){
-                    //     cardButtons[c].setEnabled(false);
-                    //     cardButtons[c].setDisabledIcon(unrevealed);
-                    //     }
-                    // }
                     startGameButton.setEnabled(true);
                     endGameButton.setEnabled(false);
                 }
             }
+        };
+    }
+
+    private void initModeButtonActionListener(){
+        modeButtonActionListener = new ActionListener(){
+          public void actionPerformed(ActionEvent e){
+            timer.stopTimer();
+            Application.modesFrame.setFirstOpen(false);
+            Application.modesFrame.loadModesFrameThroughButton();    
+          }  
         };
     }
 
