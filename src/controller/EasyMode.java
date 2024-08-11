@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import javax.swing.JButton;
@@ -12,12 +13,22 @@ public class EasyMode extends Graphic{
     private static final int COLUMNS = 4;
     private static final int ROWS = 3;
     private static final Dimension GAME_PANEL_DIMENSION = new Dimension(800,500);
+    private String theme;
     //private String mode;
 
-    public EasyMode(String mode){
-        super(CARD_AMOUNT, IMAGE_PATH+mode, COLUMNS, ROWS, GAME_PANEL_DIMENSION);
+    public EasyMode(String theme){
+        super(CARD_AMOUNT, IMAGE_PATH+theme, COLUMNS, ROWS, GAME_PANEL_DIMENSION);
+        this.theme = theme;
+        this.updateGameInfoLabel();
     }
     
+    @Override
+    protected void updateGameInfoLabel(){
+        text.setText("<html><br>Informações da partida:<br><br>Modo: Fácil<br> Tema: "
+        +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
+        text.setForeground(Color.BLACK);
+    }
+
     @Override //melhorar esse override!
     public JScrollPane initGamePanel(int columns, int rows) {
         //a única coisa que precisamos mexer é a inicialização!

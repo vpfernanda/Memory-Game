@@ -29,7 +29,7 @@ public class Graphic extends JFrame {
 
     // Labels
     private JLabel labelTop;
-    private JLabel text;
+    protected JLabel text;
     private JLabel userGreetings;
 
     // Image Icons
@@ -100,7 +100,7 @@ public class Graphic extends JFrame {
         unrevealed = new ImageIcon(getClass().getResource(imgPath+"cartela.jpg"));
     }
 
-    private String getGameInfo() {
+    protected String getGameInfo() {
         return "\nAcertos: " +memory.getPlayerHits()+
         " \nErros: "+memory.getPlayerErrors()+"";
     }
@@ -246,7 +246,7 @@ public class Graphic extends JFrame {
         button.setDisabledIcon(image);
     }
 
-    private void updateGameInfoLabel(){
+    protected void updateGameInfoLabel(){
         text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
         text.setForeground(Color.BLACK);
     }
