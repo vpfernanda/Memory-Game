@@ -7,16 +7,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class MediumMode extends Graphic{
-    private static final int CARD_AMOUNT = 32;
-    private static final String IMAGE_PATH = "img/Medium/";
-    private static final int COLUMNS = 8;
-    private static final int ROWS = 4;
+public class HardMode extends Graphic{
+    private static final int CARD_AMOUNT = 54;
+    private static final String IMAGE_PATH = "img/Hard/";
+    private static final int COLUMNS = 9;
+    private static final int ROWS = 6;
     //ATTENTION
     private static final Dimension GAME_PANEL_DIMENSION = new Dimension(600,400);
     private String theme;
 
-    public MediumMode(String theme){
+    public HardMode(String theme){
         super(CARD_AMOUNT, IMAGE_PATH+theme, COLUMNS, ROWS, GAME_PANEL_DIMENSION);
         this.theme = theme;
         this.updateGameInfoLabel();
@@ -24,7 +24,7 @@ public class MediumMode extends Graphic{
 
     @Override
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>Modo: Médio<br> Tema: "
+        text.setText("<html><br>Informações da partida:<br><br>Modo: Fácil<br> Tema: "
         +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
         text.setForeground(Color.BLACK);
     } 
@@ -53,5 +53,3 @@ public class MediumMode extends Graphic{
     }
     
 }
-
-    

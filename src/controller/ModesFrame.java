@@ -182,10 +182,13 @@ public class ModesFrame extends JFrame{
             public void actionPerformed(ActionEvent e){
                 if(firstOpen)
                     System.exit(0);
+                
+                
                 //important knowledge gained below!
                 //as I'm referencing the instance of THIS class inside the actionPerformed's method declaration
                 //(which belongs to another class), "this" is not enough to make a reference.
                 //Syntax: ClassName.this.method(); :-) 
+                graphic.timer.startTimer();
                 ModesFrame.this.setVisible(false);
             }
         };
@@ -257,6 +260,7 @@ public class ModesFrame extends JFrame{
 
     public void loadModesFrameThroughButton(){
             playerNameTextField.setEnabled(false);
+            closeWindowButton.setText("Voltar ao jogo");
             this.repaint();
             this.setVisible(true);
     }
