@@ -24,7 +24,7 @@ public class MediumMode extends Graphic{
 
     @Override
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>Modo: Fácil<br> Tema: "
+        text.setText("<html><br>Informações da partida:<br><br>Modo: Médio<br> Tema: "
         +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
         text.setForeground(Color.BLACK);
     } 
