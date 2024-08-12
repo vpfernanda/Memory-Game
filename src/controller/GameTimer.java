@@ -7,24 +7,28 @@ import javax.swing.Timer;
 
 public class GameTimer {
     private Timer time;
-    private JLabel elapsedTime;
-    private ActionListener actionListener;
-    int secondsElapsed=0;
-    private String elapsedTimeString;
+    protected JLabel elapsedTime;
+    protected ActionListener actionListener;
+    protected int secondsElapsed=0;
+    protected String elapsedTimeString;
 
     GameTimer(){
         elapsedTimeString = "Tempo decorrido: 00:00:00";
         elapsedTime = new JLabel("<html>"+elapsedTimeString+"<html>");
+        initTimerAListener();
+        time = new Timer(1000, actionListener);
+    }
+
+    protected void initTimerAListener(){
         actionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 secondsElapsed++;
                 updateElapsedTime();
             }
         };
-        time = new Timer(1000, actionListener);
     }
         
-    private void updateElapsedTime(){
+    protected void updateElapsedTime(){
         int hours = secondsElapsed / 3600;
         int minutes = (secondsElapsed % 3600) / 60;
         int seconds = secondsElapsed % 60;

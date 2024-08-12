@@ -14,7 +14,7 @@ public class EasyMode extends Graphic{
     private static final int ROWS = 3;
     private static final Dimension GAME_PANEL_DIMENSION = new Dimension(800,500);
     private String theme;
-    //private String mode;
+    private static final String MODE = "Fácil";
 
     public EasyMode(String theme){
         super(CARD_AMOUNT, IMAGE_PATH+theme, COLUMNS, ROWS, GAME_PANEL_DIMENSION);
@@ -24,7 +24,7 @@ public class EasyMode extends Graphic{
     
     @Override
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>Modo: Fácil<br> Tema: "
+        text.setText("<html><br>Informações da partida:<br><br>Modo:"+MODE+"<br> Tema: "
         +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
         text.setForeground(Color.BLACK);
     }
