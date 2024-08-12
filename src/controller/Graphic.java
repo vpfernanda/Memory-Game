@@ -76,7 +76,7 @@ public class Graphic extends JFrame {
         this.gamePanelDimension = gamePanelDimension;
         //instancing class atributes
         this.memory = new Memory(cardAmount);
-        this.timer = new GameTimer();
+        initTimer();
         this.text = new JLabel();
         this.userGreetings = new JLabel();
         //some "set" methods being called
@@ -103,6 +103,10 @@ public class Graphic extends JFrame {
     protected String getGameInfo() {
         return "\nAcertos: " +memory.getPlayerHits()+
         " \nErros: "+memory.getPlayerErrors()+"";
+    }
+
+    public void initTimer(){
+        this.timer = new GameTimer();
     }
 
     private void setAllFonts(String font){
@@ -246,6 +250,7 @@ public class Graphic extends JFrame {
         button.setDisabledIcon(image);
     }
 
+    //VERIFICAR POSSIBILIDADE DE ALTERAÇÃO PRA NÃO PRECISAR SOBRESCREVER
     protected void updateGameInfoLabel(){
         text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
         text.setForeground(Color.BLACK);

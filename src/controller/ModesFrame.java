@@ -231,6 +231,10 @@ public class ModesFrame extends JFrame{
             case "Médio":
                 graphic = new MediumMode(chosenTheme+"/");
                 break;
+            //case "Difícil":
+            case "Contra o tempo":
+                graphic = new TimeChallenge(chosenTheme+"/");
+            
             }
     }
 
