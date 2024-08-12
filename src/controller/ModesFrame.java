@@ -5,19 +5,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -182,8 +177,7 @@ public class ModesFrame extends JFrame{
             public void actionPerformed(ActionEvent e){
                 if(firstOpen)
                     System.exit(0);
-                
-                
+            
                 //important knowledge gained below!
                 //as I'm referencing the instance of THIS class inside the actionPerformed's method declaration
                 //(which belongs to another class), "this" is not enough to make a reference.
@@ -212,6 +206,7 @@ public class ModesFrame extends JFrame{
                 if(firstOpen){
                     graphicInitializer();
                 }
+                //do we have an instance of Graphic already running? then, let's restart it properly
                 else if(graphic!=null){
                     graphic.dispose();
                     graphic = null;
@@ -231,9 +226,12 @@ public class ModesFrame extends JFrame{
             case "Médio":
                 graphic = new MediumMode(chosenTheme+"/");
                 break;
-            //case "Difícil":
+            case "Difícil":
+                graphic = new HardMode(chosenTheme+"/");
+                break;
             case "Contra o tempo":
                 graphic = new TimeChallenge(chosenTheme+"/");
+                break;
             
             }
     }
