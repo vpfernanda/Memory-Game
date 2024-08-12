@@ -34,9 +34,9 @@ public class Graphic extends JFrame {
 
     // Image Icons
     private ImageIcon unrevealed; //Image of unrevealed cards
-    private ImageIcon icons[];
-    private ImageIcon img1; //First card of the attempt pair
-    private ImageIcon img2; //Second card of the attempt pair
+    protected ImageIcon icons[];
+    protected ImageIcon img1; //First card of the attempt pair
+    protected ImageIcon img2; //Second card of the attempt pair
 
     // Timer
     protected GameTimer timer;
@@ -208,31 +208,39 @@ public class Graphic extends JFrame {
                             img2 = (ImageIcon) cardButtons[clickedCardButton2].getIcon();
                             //Comparing cards -> MAYBE it would turn up to be a method
                             if (memory.compareCards(img1, img2)) {
-                                memory.playerHit();
-                                updateGameInfoLabel();
-                                JOptionPane.showMessageDialog(null, getPlayerHitString());
-                                cardButtons[clickedCardButton1].setEnabled(false);
-                                cardButtons[clickedCardButton1].setDisabledIcon(img1);
-                                cardButtons[clickedCardButton2].setEnabled(false);
-                                cardButtons[clickedCardButton2].setDisabledIcon(img2);
+                                pairFound();
                                 //Player found all cards?
                                 if(memory.getPlayerHits()==cardAmount/2)
                                     loadEndGameWindow(event);
                                 return;
                             } 
                             //Then, user has not found a pair...
-                            memory.playerError();
-                            updateGameInfoLabel();
-                            JOptionPane.showMessageDialog(null, getPlayerErrorString());
-                            //Set all remaing cards to unrevealed
-                            for (int c = 0; c < cardAmount; c++)
-                                setButtonIcon(cardButtons[c],unrevealed, true);
-                            
+                            playerErrorActions();
                             return;
                         }
                 }
             }
         };
+    }
+
+    protected void playerErrorActions(){
+        memory.playerError();
+        updateGameInfoLabel();
+        JOptionPane.showMessageDialog(null, getPlayerErrorString());
+        //Set all remaing cards to unrevealed
+        for (int c = 0; c < cardAmount; c++)
+            setButtonIcon(cardButtons[c],unrevealed, true);
+        
+    }
+
+    protected void pairFound(){
+        memory.playerHit();
+        updateGameInfoLabel();
+        JOptionPane.showMessageDialog(null, getPlayerHitString());     
+        cardButtons[clickedCardButton1].setEnabled(false);
+        cardButtons[clickedCardButton1].setDisabledIcon(img1);
+        cardButtons[clickedCardButton2].setEnabled(false);
+        cardButtons[clickedCardButton2].setDisabledIcon(img2);                   
     }
 
     private void setButtonIcon(JButton button, ImageIcon icon, boolean enabled) {
@@ -331,7 +339,7 @@ public class Graphic extends JFrame {
         endGameButton.addActionListener(gameEndActionListener);
     }
 
-    private void initStartGameActionListener() {
+    protected void initStartGameActionListener() {
         gameStartActionListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (int c=0; c<cardAmount; c++){
@@ -377,7 +385,7 @@ public class Graphic extends JFrame {
         };
     }
 
-    private void loadEndGameWindow(ActionEvent e){
+    protected void loadEndGameWindow(ActionEvent e){
         timer.stopTimer();
         String message;
         if(memory.getPlayerHits()==cardAmount/2){
@@ -385,6 +393,7 @@ public class Graphic extends JFrame {
         }
         else
             message = "Jogo finalizado";
+
         String[] options = {"Novo jogo", "Sair do jogo"};
         int choice = JOptionPane.showOptionDialog(null, 
             message+"\n"+timer.toString()+"\n"+getGameInfo(), "Encerrar jogo", 

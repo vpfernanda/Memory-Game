@@ -9,6 +9,7 @@ public class CountdownTimer extends GameTimer{
     private int seconds; //indicates how many seconds the cronometer starts with
     private int remainingSeconds;
     private String endTimerMessage;
+    private TimeUpListener listener;
 
     public CountdownTimer(int seconds, String endTimerMessage){
         super();
@@ -16,6 +17,11 @@ public class CountdownTimer extends GameTimer{
         this.remainingSeconds = seconds;
         this.endTimerMessage = endTimerMessage;
         elapsedTime.setForeground(Color.green);
+    }
+
+    @Override
+    public void resetTimer(){
+        remainingSeconds = seconds;
     }
 
     @Override
@@ -30,6 +36,7 @@ public class CountdownTimer extends GameTimer{
 
     @Override
     protected void updateElapsedTime(){
+        applyColorsToLabel();
         int hours = remainingSeconds / 3600;
         int minutes = (remainingSeconds % 3600) / 60;
         int seconds = remainingSeconds % 60;
@@ -38,16 +45,21 @@ public class CountdownTimer extends GameTimer{
         if(remainingSeconds==0){
             stopTimer();
             showTimerAlert();
+            if (listener != null) {
+                listener.onTimeUp();
+            }
         }   
-        applyColorsToLabel();
     }
 
     private void showTimerAlert(){
         JOptionPane.showMessageDialog(null,this.endTimerMessage);
+        this.resetTimer();
     }
 
     private void applyColorsToLabel(){
-        if(remainingSeconds<30 && remainingSeconds>=10)
+        if (remainingSeconds >=30)
+        elapsedTime.setForeground(Color.GREEN);
+        else if(remainingSeconds<30 && remainingSeconds>=10)
             elapsedTime.setForeground(Color.ORANGE);
         else if (remainingSeconds<10) //Hurry up!
             elapsedTime.setForeground(Color.RED);
@@ -59,6 +71,15 @@ public class CountdownTimer extends GameTimer{
 
     public void addExtraTime(int extraTime){
         this.remainingSeconds += extraTime;
+        addExtraTimeLabel(extraTime);
+    }
+
+    public void addExtraTimeLabel(int extraTime){
+        elapsedTime.setText(elapsedTime.getText()+"<br>"+extraTime+"s extras!<br>");
+    }
+
+    public void setTimeUpListener(TimeUpListener listener) {
+        this.listener = listener;
     }
     
 }
