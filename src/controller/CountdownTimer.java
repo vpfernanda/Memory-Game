@@ -39,6 +39,7 @@ public class CountdownTimer extends GameTimer{
             stopTimer();
             showTimerAlert();
         }   
+        applyColorsToLabel();
     }
 
     private void showTimerAlert(){
@@ -48,12 +49,16 @@ public class CountdownTimer extends GameTimer{
     private void applyColorsToLabel(){
         if(remainingSeconds<30 && remainingSeconds>=10)
             elapsedTime.setForeground(Color.ORANGE);
-        else if (remainingSeconds<10)
+        else if (remainingSeconds<10) //Hurry up!
             elapsedTime.setForeground(Color.RED);
     }
 
     public int getInitialSeconds(){
         return seconds;
+    }
+
+    public void addExtraTime(int extraTime){
+        this.remainingSeconds += extraTime;
     }
     
 }
