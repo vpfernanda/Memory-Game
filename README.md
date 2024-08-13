@@ -7,10 +7,11 @@ The game has 20 unrevealed cards; the main goal is to find an identical card, pa
 ## Take a look...
 2024, August 13th - UPDATES  
 <img src="screenshots/sc1.jpg" alt="Game window - Mode: Medium / Theme: Animals" width=75%/>
-<img src="screenshots/sc2.jpg" alt="Game window and Mode Selection window" width=75%>
-All the game modes are now completely implemented. The images above show how the game window looks like right now. The user is now able to choose a mode and a theme, which results in 12 different ways to play.
+<img src="screenshots/sc2.jpg" alt="Game window and Mode Selection window" width=75%>\
+
+All the game modes are now completely implemented. The images above show what the game window looks like right now. The user can now choose a mode and a theme, resulting in 12 different ways to play.
 - Modes: Easy (12 cards), Medium (32 cards), Hard (40 cards), Time Challenge (32 cards + game time limited to 60 seconds).
-Each mode allows 3 themes, as following: 
+Each mode allows 3 themes, as follows: 
 - Animals, Food, Objects.
 
 ## Next steps 
