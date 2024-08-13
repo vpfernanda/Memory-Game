@@ -196,8 +196,10 @@ public class Graphic extends JFrame {
                         clickedCardButton2 = buttonActionCommand;
                         //User clicked the same card?
                         if (clickedCardButton1 == clickedCardButton2) {
-                            text.setText(text.getText() + "<html><br>" + getGameWarningString() + "</html>");
+                            String textLabel = text.getText();
+                            text.setText("<html><br>" + Graphic.this.getGameWarningString() +"<br><br>"+textLabel);
                             text.setForeground(Color.RED);
+                            actionButtonsPanel.repaint();
                             memory.clickCancel();
                             break;
                         } 
