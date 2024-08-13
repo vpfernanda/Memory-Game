@@ -33,7 +33,7 @@ public class GameTimer {
         int minutes = (secondsElapsed % 3600) / 60;
         int seconds = secondsElapsed % 60;
         elapsedTimeString = String.format("Tempo decorrido: %02d:%02d:%02d", hours, minutes, seconds);
-        elapsedTime.setText(String.format("<html>"+elapsedTimeString+"<html>", hours, minutes, seconds));
+        elapsedTime.setText(String.format("<html><br><br>"+elapsedTimeString+"<html>", hours, minutes, seconds));
     }
 
     public void startTimer(){
@@ -47,6 +47,7 @@ public class GameTimer {
     public void resetTimer(){
         time.stop();
         secondsElapsed = 0;
+        updateElapsedTime();
     }
 
     public JLabel getElapsedTime(){

@@ -25,10 +25,10 @@ public class MediumMode extends Graphic{
 
     @Override
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>Modo:"+MODE+"<br> Tema: "
-        +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
+        text.setText("<html><br>Informações da partida:<br>Modo:"+MODE+"<br> Tema: "
+        +theme.replace('/', ' ')+"<br>"+getGameInfo()+"<br><br><br>");
         text.setForeground(Color.BLACK);
-    } 
+    }
     /*@Override
     public void actionButtonsPanelResize(){
         actionButtonsPanel.setMinimumSize(new Dimension(150, MAXIMIZED_VERT));
