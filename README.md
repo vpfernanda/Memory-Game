@@ -5,6 +5,9 @@ This project was first developed during my technician informatics course, at CEF
 The game has 20 unrevealed cards; the main goal is to find an identical card, pair to pair. On the left side, you will find a counter of mistakes and hits.  Once all the cards have been revealed, the game is finished (and the window is closed).
 
 ## Take a look...
+You can see a demonstration of the project running in the video below. (The english version of the same demonstration will be available soon!)
+[![Imagem de pré-visualização](https://img.youtube.com/vi/7ij_KCA-ucI/0.jpg)](https://www.youtube.com/watch?v=7ij_KCA-ucI)
+
 2024, August 13th - UPDATES  
 <img src="screenshots/sc1.jpg" alt="Game window - Mode: Medium / Theme: Animals" width=75%/>
 <img src="screenshots/sc2.jpg" alt="Game window and Mode Selection window" width=75%>
