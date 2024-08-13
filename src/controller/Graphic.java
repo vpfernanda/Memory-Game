@@ -17,7 +17,7 @@ public class Graphic extends JFrame {
 
     // Buttons
     protected JButton[] cardButtons;
-    private JButton startGameButton;
+    protected JButton startGameButton;
     private JButton endGameButton;
     private JButton modeButton;
 
@@ -55,6 +55,8 @@ public class Graphic extends JFrame {
     protected int cardAmount; //IMPORTANT VARIABLE
     protected int rows;
     protected int columns;
+
+    private boolean modesFrameThroughEndGame;
     
 
     protected Dimension gamePanelDimension;
@@ -80,12 +82,13 @@ public class Graphic extends JFrame {
         this.text = new JLabel();
         this.userGreetings = new JLabel();
         //some "set" methods being called
-        text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
+        text.setText("<html><br>Informações da partida:<br>"+getGameInfo()+"<br><br>");
         this.gameWarningString = "Atenção: Você clicou na mesma carta. Escolha uma carta DIFERENTE!";
         this.userGreetings.setText("<html>Olá, "+Application.modesFrame.getUsername()+"!</html>");
         this.userGreetings.setForeground(Color.BLUE);
         this.setUnrevealed(imagePath);
         setAllFonts("Comic Sans MS");
+        modesFrameThroughEndGame = false;
         //render all elements
         add(loadMainPanel());
         // Window configs
@@ -102,7 +105,7 @@ public class Graphic extends JFrame {
 
     protected String getGameInfo() {
         return "\nAcertos: " +memory.getPlayerHits()+
-        " \nErros: "+memory.getPlayerErrors()+"";
+        " \nErros: "+memory.getPlayerErrors();
     }
 
     public void initTimer(){
@@ -197,7 +200,8 @@ public class Graphic extends JFrame {
                         //User clicked the same card?
                         if (clickedCardButton1 == clickedCardButton2) {
                             String textLabel = text.getText();
-                            text.setText("<html><br>" + Graphic.this.getGameWarningString() +"<br><br>"+textLabel);
+                            //text.setText("<html><br>" + Graphic.this.getGameWarningString() +"<br><br>"+textLabel);
+                            text.setText("<html><br>" + Graphic.this.getGameWarningString()+"</html>");
                             text.setForeground(Color.RED);
                             actionButtonsPanel.repaint();
                             memory.clickCancel();
@@ -227,22 +231,58 @@ public class Graphic extends JFrame {
 
     protected void playerErrorActions(){
         memory.playerError();
-        updateGameInfoLabel();
-        JOptionPane.showMessageDialog(null, getPlayerErrorString());
-        //Set all remaing cards to unrevealed
-        for (int c = 0; c < cardAmount; c++)
-            setButtonIcon(cardButtons[c],unrevealed, true);
+        text.setText(text.getText()+"<font color=\"RED\">Tente novamente!</font></html>");
+        //text.setForeground(Color.red);
         
+        removeCardButtonsAListener();
+
+        Timer actionDelay = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Set all remaing cards to unrevealed
+                setButtonIcon(cardButtons[clickedCardButton1],unrevealed, true);
+                setButtonIcon(cardButtons[clickedCardButton2],unrevealed, true);
+                for (int c = 0; c < cardAmount; c++){
+                    cardButtons[c].addActionListener(cardButtonsActionListener);
+                }
+                updateGameInfoLabel();
+                
+            } 
+        });
+        actionDelay.setRepeats(false);
+        actionDelay.start();
     }
+
+   
 
     protected void pairFound(){
         memory.playerHit();
-        updateGameInfoLabel();
-        JOptionPane.showMessageDialog(null, getPlayerHitString());     
-        cardButtons[clickedCardButton1].setEnabled(false);
-        cardButtons[clickedCardButton1].setDisabledIcon(img1);
-        cardButtons[clickedCardButton2].setEnabled(false);
-        cardButtons[clickedCardButton2].setDisabledIcon(img2);                   
+        text.setText(text.getText()+"<font color=\"GREEN\">Parabéns! <br>Você acertou! </font></html>");
+
+        removeCardButtonsAListener();
+
+        Timer actionDelay = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //Set all remaing cards to unrevealed
+                cardButtons[clickedCardButton1].setEnabled(false);
+                cardButtons[clickedCardButton1].setDisabledIcon(img1);
+                cardButtons[clickedCardButton2].setEnabled(false);
+                cardButtons[clickedCardButton2].setDisabledIcon(img2); 
+
+                for (int c = 0; c < cardAmount; c++){
+                    cardButtons[c].addActionListener(cardButtonsActionListener);
+                }
+                updateGameInfoLabel();
+                
+            } 
+        });
+        actionDelay.setRepeats(false);
+        actionDelay.start();             
+    }
+
+    private void removeCardButtonsAListener(){
+        for (int c = 0; c < cardAmount; c++){
+            cardButtons[c].removeActionListener(cardButtonsActionListener);
+        }
     }
 
     private void setButtonIcon(JButton button, ImageIcon icon, boolean enabled) {
@@ -262,7 +302,7 @@ public class Graphic extends JFrame {
 
     //VERIFICAR POSSIBILIDADE DE ALTERAÇÃO PRA NÃO PRECISAR SOBRESCREVER
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>"+getGameInfo()+"<html><br>");
+        text.setText("<html><br>Informações da partida:<br>"+getGameInfo()+"<html><br>");
         text.setForeground(Color.BLACK);
     }
 
@@ -351,6 +391,7 @@ public class Graphic extends JFrame {
                 initRevealedCardIcons(memory.randomize(), imagePath);
                 timer.resetTimer();
                 timer.startTimer();
+                memory.gameReset();
                 updateGameInfoLabel();
                 startGameButton.setEnabled(false);
                 endGameButton.setEnabled(true);
@@ -370,8 +411,6 @@ public class Graphic extends JFrame {
                 }
                 else{
                     loadEndGameWindow(e);
-                    startGameButton.setEnabled(true);
-                    endGameButton.setEnabled(false);
                 }
             }
         };
@@ -381,7 +420,7 @@ public class Graphic extends JFrame {
         modeButtonActionListener = new ActionListener(){
           public void actionPerformed(ActionEvent e){
             timer.stopTimer();
-            Application.modesFrame.setFirstOpen(false);
+            Application.modesFrame.setFirstOpen(modesFrameThroughEndGame);
             Application.modesFrame.loadModesFrameThroughButton();    
           }  
         };
@@ -396,18 +435,29 @@ public class Graphic extends JFrame {
         else
             message = "Jogo finalizado";
 
-        String[] options = {"Novo jogo", "Sair do jogo"};
+        String[] options = {"Novo jogo", "Trocar modo/nível","Sair do jogo"};
+
         int choice = JOptionPane.showOptionDialog(null, 
-            message+"\n"+timer.toString()+"\n"+getGameInfo(), "Encerrar jogo", 
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+            message+"\n"+timer.toString()+"\n"+getGameInfo(), message, 
+            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
             options, options[0]);
-            memory.gameReset();
-            timer.resetTimer();
+
+        //memory.gameReset();
+        //timer.resetTimer();
             switch (choice){
                 case (JOptionPane.YES_OPTION):
+                    //timer.resetTimer();
+                    //memory.gameReset();
+                    //updateGameInfoLabel();
                     gameStartActionListener.actionPerformed(e);
                     break;
                 case (JOptionPane.NO_OPTION):
+                    modesFrameThroughEndGame = true;
+                    Application.modesFrame.setFirstOpen(true);
+                    modeButton.doClick();
+                    modesFrameThroughEndGame = false;
+                    break;
+                case (JOptionPane.CANCEL_OPTION):
                     System.exit(0);
             }
     }

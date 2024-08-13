@@ -41,7 +41,6 @@ public class ModesFrame extends JFrame{
     private boolean firstOpen;
     private Graphic graphic;
 
-    //is firstOpen really necessary?
     
     public ModesFrame(){
         super("Escolher um modo de jogo");
@@ -182,7 +181,8 @@ public class ModesFrame extends JFrame{
                 //as I'm referencing the instance of THIS class inside the actionPerformed's method declaration
                 //(which belongs to another class), "this" is not enough to make a reference.
                 //Syntax: ClassName.this.method(); :-) 
-                graphic.timer.startTimer();
+                if(!graphic.startGameButton.isEnabled())
+                    graphic.timer.startTimer();
                 ModesFrame.this.setVisible(false);
             }
         };
@@ -203,7 +203,7 @@ public class ModesFrame extends JFrame{
                 chosenMode = getSelectedRadio(modesButtonsList);
                 chosenTheme = getSelectedRadio(themesButtonsList);   
                 hideModesFrame();  
-                if(firstOpen){
+                if(graphic==null){
                     graphicInitializer();
                 }
                 //do we have an instance of Graphic already running? then, let's restart it properly
@@ -262,7 +262,10 @@ public class ModesFrame extends JFrame{
 
     public void loadModesFrameThroughButton(){
             playerNameTextField.setEnabled(false);
-            closeWindowButton.setText("Voltar ao jogo");
+            if(firstOpen)
+                closeWindowButton.setText("Sair do jogo");
+            else
+                closeWindowButton.setText("Voltar ao jogo");
             this.repaint();
             this.setVisible(true);
     }

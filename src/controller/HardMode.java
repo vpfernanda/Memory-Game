@@ -24,8 +24,8 @@ public class HardMode extends Graphic{
     
     @Override
     protected void updateGameInfoLabel(){
-        text.setText("<html><br>Informações da partida:<br><br>Modo:"+MODE+"<br> Tema: "
-        +theme.replace('/', ' ')+"<br><br><br>"+getGameInfo()+"</html>");
+        text.setText("<html><br>Informações da partida:<br>Modo:"+MODE+"<br> Tema: "
+        +theme.replace('/', ' ')+"<br>"+getGameInfo()+"<br><br>");
         text.setForeground(Color.BLACK);
     }
 
