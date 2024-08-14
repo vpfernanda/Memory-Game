@@ -5,6 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
+
 public class CountdownTimer extends GameTimer{
     private int seconds; //indicates how many seconds the cronometer starts with
     private int remainingSeconds;
@@ -41,7 +47,7 @@ public class CountdownTimer extends GameTimer{
         int minutes = (remainingSeconds % 3600) / 60;
         int seconds = remainingSeconds % 60;
         this.elapsedTimeString = String.format("Tempo RESTANTE: %02d:%02d:%02d", hours, minutes, seconds);
-        this.elapsedTime.setText(String.format("<html><br><br>"+elapsedTimeString+"</html>", hours, minutes, seconds));
+        this.elapsedTime.setText(String.format("<html><br><br>"+elapsedTimeString, hours, minutes, seconds));
         if(remainingSeconds==0){
             stopTimer();
             showTimerAlert();
@@ -58,13 +64,17 @@ public class CountdownTimer extends GameTimer{
 
     private void applyColorsToLabel(){
         if (remainingSeconds >=30)
-        elapsedTime.setForeground(Color.GREEN);
+        elapsedTime.setForeground(new Color(0, 153, 77));
         else if(remainingSeconds<30 && remainingSeconds>=10)
-            elapsedTime.setForeground(Color.ORANGE);
+            elapsedTime.setForeground(new Color(255, 102, 0));
         else if (remainingSeconds<10) //Hurry up!
             elapsedTime.setForeground(Color.RED);
     }
 
+    
+    /** 
+     * @return int
+     */
     public int getInitialSeconds(){
         return seconds;
     }

@@ -21,6 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
+
 public class ModesFrame extends JFrame{
     private  ArrayList<String> modes; 
     private  ArrayList<String> themes;
@@ -40,6 +46,8 @@ public class ModesFrame extends JFrame{
     private String chosenTheme;
     private boolean firstOpen;
     private Graphic graphic;
+
+    
 
     
     public ModesFrame(){
@@ -80,9 +88,9 @@ public class ModesFrame extends JFrame{
 
     private void initThemesArray(){
         themes = new ArrayList<>();
-        themes.add("Animals");
-        themes.add("Food");
-        themes.add("Objects");
+        themes.add("Animais");
+        themes.add("Alimentos");
+        themes.add("Objetos");
     }
 
     private void initRadioButtonsGroup(ArrayList<String> arrayList, JPanel p, ButtonGroup bg, ArrayList<JRadioButton> list){
@@ -123,7 +131,6 @@ public class ModesFrame extends JFrame{
     } 
 
     private JPanel initOkCancelButtonsContainer(){
-        //TODO: inicializar os botões ok e cancel em um container (Panel?) que tenha layout BOX, com X_AXIS
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         okButton = new JButton("Ok");

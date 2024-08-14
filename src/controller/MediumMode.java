@@ -7,6 +7,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
+
 public class MediumMode extends Graphic{
     private static final int CARD_AMOUNT = 32;
     private static final String IMAGE_PATH = "img/Medium/";

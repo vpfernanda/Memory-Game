@@ -5,6 +5,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
+
 public class GameTimer {
     private Timer time;
     protected JLabel elapsedTime;
