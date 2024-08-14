@@ -5,10 +5,13 @@ import app.Application;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
+
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
 
 public class Graphic extends JFrame {
     // Panels
@@ -57,16 +60,7 @@ public class Graphic extends JFrame {
     protected int columns;
 
     private boolean modesFrameThroughEndGame;
-    
-
     protected Dimension gamePanelDimension;
-
-
-    //Default parameters to Graphic (superclass)
-    //cardAmount: 20
-    //imagePath: "img/Default/"
-    //columns: 5
-    //rows: 4
 
     public Graphic(int cardAmount, String imagePath, int columns, int rows, Dimension gamePanelDimension) {
         super("Jogo da Memória!");
@@ -99,10 +93,18 @@ public class Graphic extends JFrame {
         SwingUtilities.invokeLater(this::updateDisabledIcons); // Garanta que os ícones sejam atualizados após a renderização
     }
 
+    
+    /** 
+     * @param imgPath
+     */
     private void setUnrevealed(String imgPath){
         unrevealed = new ImageIcon(getClass().getResource(imgPath+"cartela.jpg"));
     }
 
+    
+    /** 
+     * @return String
+     */
     protected String getGameInfo() {
         return "\nAcertos: " +memory.getPlayerHits()+
         " \nErros: "+memory.getPlayerErrors();
@@ -199,7 +201,6 @@ public class Graphic extends JFrame {
                         clickedCardButton2 = buttonActionCommand;
                         //User clicked the same card?
                         if (clickedCardButton1 == clickedCardButton2) {
-                            String textLabel = text.getText();
                             //text.setText("<html><br>" + Graphic.this.getGameWarningString() +"<br><br>"+textLabel);
                             text.setText("<html><br>" + Graphic.this.getGameWarningString()+"</html>");
                             text.setForeground(Color.RED);
@@ -252,8 +253,6 @@ public class Graphic extends JFrame {
         actionDelay.start();
     }
 
-   
-
     protected void pairFoundActions(){
         memory.playerHit();
         text.setText(text.getText()+"<font color=\"GREEN\">Parabéns! <br>Você acertou! </font>");
@@ -283,7 +282,7 @@ public class Graphic extends JFrame {
         }
     }
 
-    private void setButtonIcon(JButton button, ImageIcon icon, boolean enabled) {
+    protected void setButtonIcon(JButton button, ImageIcon icon, boolean enabled) {
         int width = button.getWidth();
         int height = button.getHeight();
         //Resizing image to make it proportional to the button
@@ -298,7 +297,6 @@ public class Graphic extends JFrame {
         button.setDisabledIcon(image);
     }
 
-    //VERIFICAR POSSIBILIDADE DE ALTERAÇÃO PRA NÃO PRECISAR SOBRESCREVER
     protected void updateGameInfoLabel(){
         text.setText("<html><br>Informações da partida:<br>"+getGameInfo()+"<html><br>");
         text.setForeground(Color.BLACK);
@@ -320,6 +318,7 @@ public class Graphic extends JFrame {
 
     public JScrollPane initGamePanel(int columns, int rows) {
         gameButtonsPanel = new JPanel(new GridLayout(rows, columns, 5, 5));
+        gameButtonsPanel.setBackground(new Color(0, 0, 102));
         gameButtonsPanel.setPreferredSize(gamePanelDimension);
         initUnrevealedCardButtons(cardAmount, false);
         for (JButton b : cardButtons) {
@@ -330,6 +329,7 @@ public class Graphic extends JFrame {
     
     public JPanel initActionButtonsPanel() {
         actionButtonsPanel = new JPanel();
+        actionButtonsPanel.setBackground(new Color(255, 204, 255));
         //allows us to render the components towards vertical
         actionButtonsPanel.setLayout(new BoxLayout(actionButtonsPanel, BoxLayout.Y_AXIS));
         actionButtonsPanel.setPreferredSize(new Dimension(130, getHeight()));
@@ -468,7 +468,10 @@ public class Graphic extends JFrame {
 
     private JPanel loadMainPanel() {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(initLabelTop(), BorderLayout.NORTH);
+        JPanel top = new JPanel();
+        top.setBackground(new Color(255, 204, 255));
+        top.add(initLabelTop());
+        mainPanel.add(top, BorderLayout.NORTH);
         mainPanel.add(loadSecondaryPanel(), BorderLayout.CENTER);
         return mainPanel;
     }

@@ -5,6 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
+/**
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
+ */
+
 public class CountdownTimer extends GameTimer{
     private int seconds; //indicates how many seconds the cronometer starts with
     private int remainingSeconds;
@@ -58,13 +64,17 @@ public class CountdownTimer extends GameTimer{
 
     private void applyColorsToLabel(){
         if (remainingSeconds >=30)
-        elapsedTime.setForeground(Color.GREEN);
+        elapsedTime.setForeground(new Color(0, 153, 77));
         else if(remainingSeconds<30 && remainingSeconds>=10)
-            elapsedTime.setForeground(Color.ORANGE);
+            elapsedTime.setForeground(new Color(255, 102, 0));
         else if (remainingSeconds<10) //Hurry up!
             elapsedTime.setForeground(Color.RED);
     }
 
+    
+    /** 
+     * @return int
+     */
     public int getInitialSeconds(){
         return seconds;
     }

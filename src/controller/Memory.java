@@ -6,8 +6,9 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 
 /**
- *
- * @author Fernanda
+ * @author Fernanda Vieira Pagano
+ * @version 1.0
+ * @since 2024-08-13
  */
 public class Memory {
     private ArrayList<Integer> randomList;
