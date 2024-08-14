@@ -41,7 +41,7 @@ public class CountdownTimer extends GameTimer{
         int minutes = (remainingSeconds % 3600) / 60;
         int seconds = remainingSeconds % 60;
         this.elapsedTimeString = String.format("Tempo RESTANTE: %02d:%02d:%02d", hours, minutes, seconds);
-        this.elapsedTime.setText(String.format("<html><br><br>"+elapsedTimeString+"</html>", hours, minutes, seconds));
+        this.elapsedTime.setText(String.format("<html><br><br>"+elapsedTimeString, hours, minutes, seconds));
         if(remainingSeconds==0){
             stopTimer();
             showTimerAlert();

@@ -4,15 +4,17 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 public class TimeChallenge extends Graphic implements TimeUpListener {
     private static final int CARD_AMOUNT = 28;
     //Twenty eight cards, 11 valid pairs (22 cards) and 3 extratime pairs
-    private static final String IMAGE_PATH = "img/TimeChallenge/";
+    private static final String IMAGE_PATH = "img/Contra o tempo/";
     private static final int COLUMNS = 7;
     private static final int ROWS = 4;
     private static final int EXTRATIME_PAIRS = 3;
@@ -69,29 +71,73 @@ public class TimeChallenge extends Graphic implements TimeUpListener {
     }
 
     @Override
-    protected void pairFound(){
-        super.pairFound();
-        closeAllOptionPanes();
-        if((img1.getDescription().equals("extratime"))&&(img2.getDescription().equals("extratime"))){
-            ((CountdownTimer) this.timer).addExtraTime(10);    
-        }           
+    protected void pairFoundActions() {
+        memory.playerHit();    
+    
+        // Remove os ActionListeners para bloquear a interação
+        removeCardButtonsAListener();
+    
+        // Define o texto do JLabel
+        text.setText(text.getText() + "<font color=\"GREEN\">Parabéns! <br>Você acertou! </font>");
+        text.repaint(); // Força a atualização visual
+        text.revalidate(); // Força a validação do layout
+    
+        if ((img1.getDescription().equals("extratime")) && (img2.getDescription().equals("extratime"))) {
+            // Adiciona tempo extra e exibe o JLabel correspondente
+            ((CountdownTimer) TimeChallenge.this.timer).addExtraTime(10);
+    
+            // Espera 1 segundo para garantir que o texto seja visível antes de prosseguir
+            Timer extraTimeTimer = new Timer(1000, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // Após 1 segundo, desvira as cartas e reconfigura os botões
+                    continuePairFoundActions();
+                }
+            });
+            extraTimeTimer.setRepeats(false);
+            extraTimeTimer.start();
+        } else {
+            // Se não for um par de extra time, continue imediatamente
+            continuePairFoundActions();
+        }
     }
+    
+    private void continuePairFoundActions() {
+        // Atraso adicional para garantir que o texto anterior seja visível
+        Timer actionDelay = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Set all remaining cards to unrevealed
+                cardButtons[clickedCardButton1].setEnabled(false);
+                cardButtons[clickedCardButton1].setDisabledIcon(img1);
+                cardButtons[clickedCardButton2].setEnabled(false);
+                cardButtons[clickedCardButton2].setDisabledIcon(img2);
+                for (int c = 0; c < cardAmount; c++) {
+                    cardButtons[c].addActionListener(cardButtonsActionListener);
+                }
+                updateGameInfoLabel();
+            }
+        });
+        actionDelay.setRepeats(false);
+        actionDelay.start(); 
+    }
+    
+    
+    
 
-    @Override
+    /*@Override
     protected void playerErrorActions(){
         super.playerErrorActions();
-        closeAllOptionPanes();
-    }
+
+    }*/
 
     public void onTimeUp(){
         //TODO - Chamar as ações de fim de jogo. 
         ActionEvent e = new ActionEvent(this, 1, "TimeUp");
         this.timer.resetTimer();
-        closeAllOptionPanes();
+        //closeAllOptionPanes();
         this.loadEndGameWindow(e);
     }
 
-     public static void closeAllOptionPanes() {
+     /*public static void closeAllOptionPanes() {
         // Obtém todos os frames ativos (abertos) na aplicação
         for (Window window : Window.getWindows()) {
             if (window instanceof JDialog) {
@@ -99,7 +145,7 @@ public class TimeChallenge extends Graphic implements TimeUpListener {
                 window.dispose();
             }
         }
-    }
+    }*/
         
     private void showDialog(String string){
         JOptionPane.showMessageDialog(null, string, "Instruções de jogo", JOptionPane.INFORMATION_MESSAGE);

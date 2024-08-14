@@ -80,9 +80,9 @@ public class ModesFrame extends JFrame{
 
     private void initThemesArray(){
         themes = new ArrayList<>();
-        themes.add("Animals");
-        themes.add("Food");
-        themes.add("Objects");
+        themes.add("Animais");
+        themes.add("Alimentos");
+        themes.add("Objetos");
     }
 
     private void initRadioButtonsGroup(ArrayList<String> arrayList, JPanel p, ButtonGroup bg, ArrayList<JRadioButton> list){

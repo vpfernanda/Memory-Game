@@ -22,7 +22,7 @@ public class Graphic extends JFrame {
     private JButton modeButton;
 
     // ActionListeners
-    private ActionListener cardButtonsActionListener;
+    protected ActionListener cardButtonsActionListener;
     private ActionListener gameStartActionListener;
     private ActionListener gameEndActionListener;
     private ActionListener modeButtonActionListener;
@@ -50,8 +50,8 @@ public class Graphic extends JFrame {
     protected Memory memory;
 
     // Integers
-    private int clickedCardButton1;
-    private int clickedCardButton2;
+    protected int clickedCardButton1;
+    protected int clickedCardButton2;
     protected int cardAmount; //IMPORTANT VARIABLE
     protected int rows;
     protected int columns;
@@ -214,7 +214,7 @@ public class Graphic extends JFrame {
                             img2 = (ImageIcon) cardButtons[clickedCardButton2].getIcon();
                             //Comparing cards -> MAYBE it would turn up to be a method
                             if (memory.compareCards(img1, img2)) {
-                                pairFound();
+                                pairFoundActions();
                                 //Player found all cards?
                                 if(memory.getPlayerHits()==cardAmount/2)
                                     loadEndGameWindow(event);
@@ -231,7 +231,7 @@ public class Graphic extends JFrame {
 
     protected void playerErrorActions(){
         memory.playerError();
-        text.setText(text.getText()+"<font color=\"RED\">Tente novamente!</font></html>");
+        text.setText(text.getText()+"<font color=\"RED\">Tente novamente!</font>");
         //text.setForeground(Color.red);
         
         removeCardButtonsAListener();
@@ -254,9 +254,9 @@ public class Graphic extends JFrame {
 
    
 
-    protected void pairFound(){
+    protected void pairFoundActions(){
         memory.playerHit();
-        text.setText(text.getText()+"<font color=\"GREEN\">Parabéns! <br>Você acertou! </font></html>");
+        text.setText(text.getText()+"<font color=\"GREEN\">Parabéns! <br>Você acertou! </font>");
 
         removeCardButtonsAListener();
 
@@ -266,20 +266,18 @@ public class Graphic extends JFrame {
                 cardButtons[clickedCardButton1].setEnabled(false);
                 cardButtons[clickedCardButton1].setDisabledIcon(img1);
                 cardButtons[clickedCardButton2].setEnabled(false);
-                cardButtons[clickedCardButton2].setDisabledIcon(img2); 
-
+                cardButtons[clickedCardButton2].setDisabledIcon(img2);
                 for (int c = 0; c < cardAmount; c++){
                     cardButtons[c].addActionListener(cardButtonsActionListener);
                 }
                 updateGameInfoLabel();
-                
             } 
         });
         actionDelay.setRepeats(false);
         actionDelay.start();             
     }
 
-    private void removeCardButtonsAListener(){
+    protected void removeCardButtonsAListener(){
         for (int c = 0; c < cardAmount; c++){
             cardButtons[c].removeActionListener(cardButtonsActionListener);
         }
@@ -358,7 +356,7 @@ public class Graphic extends JFrame {
 
     public void initStartGameButton(String buttonText) {
         startGameButton = new JButton(buttonText);
-        startGameButton.setBackground(Color.GREEN);
+        startGameButton.setBackground(new Color(0, 204, 153));
         startGameButton.setForeground(Color.BLACK);
         initStartGameActionListener();
         startGameButton.addActionListener(gameStartActionListener);
@@ -366,7 +364,7 @@ public class Graphic extends JFrame {
 
     public void initModeButton(String buttonText) {
         modeButton = new JButton(buttonText);
-        modeButton.setBackground(Color.YELLOW);
+        modeButton.setBackground(new Color(255, 153, 255));
         modeButton.setForeground(Color.BLACK);
         initModeButtonActionListener();
         modeButton.addActionListener(modeButtonActionListener);
@@ -374,7 +372,7 @@ public class Graphic extends JFrame {
 
     public void initEndGameButton(String buttonText) {
         endGameButton = new JButton(buttonText);
-        endGameButton.setBackground(Color.RED);
+        endGameButton.setBackground(new Color(204, 0, 0));
         endGameButton.setForeground(Color.BLACK);
         initEndGameActionListener();
         endGameButton.setEnabled(false);
