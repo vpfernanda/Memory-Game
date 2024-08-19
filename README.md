@@ -2,7 +2,7 @@
 This project was first developed during my technician informatics course, at CEFET-MG. I used Java as a programming language to create this game.
 
 ## How it works
-The game has 20 unrevealed cards; the main goal is to find an identical card, pair to pair. On the left side, you will find a counter of mistakes and hits.  Once all the cards have been revealed, the game is finished (and the window is closed).
+The game has a number of unrevealed cards (which may vary according to the selected game mode); the main goal is to find an identical card, pair to pair. On the left side, you will find a counter of mistakes and hits.  Once all the cards have been revealed, the game is finished. After that, the player can opt to start a new game, change the game mode and/or theme, or finish the application.
 
 ## Take a look...
 You can see a demonstration of the project running in the video below. To watch it, click on the image below. (The english version of the same demonstration will be available soon!)  
